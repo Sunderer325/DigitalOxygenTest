@@ -25,12 +25,12 @@ public class Animation : MonoBehaviour
 			return;
 		}
 
-		if (controller.Velocity.x > 0f)
+		if (controller.Velocity.x > 0f || controller.ForcedMovementVelocity.x > 0f)
 		{
 			sprite.flipX = false;
 			animator.SetBool("IsWalking", true);
 		}
-		else if (controller.Velocity.x < 0f)
+		else if (controller.Velocity.x < 0f || controller.ForcedMovementVelocity.x < 0f)
 		{
 			sprite.flipX = true;
 			animator.SetBool("IsWalking", true);
@@ -38,6 +38,7 @@ public class Animation : MonoBehaviour
 		else animator.SetBool("IsWalking", false);
 
 		animator.SetBool("InAir", controller.InAir);
+		animator.SetBool("Invulnerability", controller.Invulnerability);
 	}
 
 	public void GetHit()

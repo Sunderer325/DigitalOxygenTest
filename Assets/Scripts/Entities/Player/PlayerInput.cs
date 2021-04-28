@@ -36,14 +36,24 @@ public class PlayerInput : MonoBehaviour
         if (attackJoystick.Direction.sqrMagnitude > 0)
             Attack(0);
 #else
-        playerInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        playerInput.x = Input.GetAxisRaw("Horizontal");
         if (Input.GetButtonDown("Jump"))
         {
             playerInput.y = 1;
         }
-        else
+        else playerInput.y = 0;
+        if (Input.GetButtonUp("Jump"))
         {
-            playerInput.y = 0;
+            playerInput.y = 2;
+        }
+
+        if (Input.GetButtonDown("Down"))
+        {
+            playerInput.y = -1;
+        }
+        else if (Input.GetButtonUp("Down"))
+        {
+            playerInput.y = -2;
         }
 
         if (Input.GetButtonDown("Fire1"))
@@ -56,7 +66,7 @@ public class PlayerInput : MonoBehaviour
         player.attacks[attackId].Action(player.gameObject.transform.position, attackJoystick.Direction, BeingType.PLAYER);
         print(attackJoystick.Direction);
 #else
-        Vector2 direction = transform.position - Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 direction = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
         player.attacks[attackId].Action(player.gameObject.transform.position, direction.normalized, BeingType.PLAYER);
 #endif
     }

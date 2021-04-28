@@ -153,6 +153,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 4774130686413929779, guid: 26ef309cf28f70442a4390d6fce0ac7e, type: 3}
   playerSpawnPoint: {fileID: 1621930937}
+  disableSpawning: 0
+  delayAfterInit: 5
   enemiesMax: 100
   enemies:
   - {fileID: 1145250114996419206, guid: 8623f4450f7a46448aa6337a619ec64e, type: 3}
@@ -174,7 +176,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.07036328, y: -0.81429195}
+  m_Offset: {x: 0, y: 13.86}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -211,7 +213,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1621930938}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: PlayerSpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -225,7 +227,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1621930937}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.08, y: -1.6800003, z: -3.5981615}
+  m_LocalPosition: {x: -1.08, y: 25.4, z: -3.5981615}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -262,7 +264,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61016cb8c4bc9cd42bd351ccc038ef05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxY: 9
+  maxY: 10
   minY: 0
   target: {fileID: 0}
 --- !u!81 &1656980870
@@ -300,7 +302,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 6
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -324,7 +326,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1656980868}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1, y: 0.94, z: -10}
+  m_LocalPosition: {x: -1, y: 10.39, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

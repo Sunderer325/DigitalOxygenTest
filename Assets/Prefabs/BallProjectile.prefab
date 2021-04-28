@@ -144,6 +144,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+  knockbackForce: 15
   gravity: -0.1
   destroyOnTTL: 1
   timeToLive: 5

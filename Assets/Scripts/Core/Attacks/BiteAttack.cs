@@ -9,7 +9,7 @@ public class BiteAttack : Attack
     [SerializeField] float knockbackY = 0.9f;
 
     Vector2 origin;
-    public override void Action(Vector2 origin, Vector2 target, BeingType beingType)
+    public override GameObject Action(Vector2 origin, Vector2 target, BeingType beingType)
     {
         LayerMask layermask = 0;
         if (beingType == BeingType.ENEMY)
@@ -21,12 +21,14 @@ public class BiteAttack : Attack
         if (hit)
         {
             if (!IsCooldownEnd())
-                return;
+                return null;
 
             Vector2 knockbackDirection = ((Vector2)hit.transform.position - origin).normalized;
             if (knockbackDirection.y < knockbackY)
                 knockbackDirection.y = knockbackY;
             hit.transform.GetComponent<Being>().GetDamage(damage, knockbackDirection * knockbackForce);
+            return hit.gameObject;
         }
+        return null;
     }
 }

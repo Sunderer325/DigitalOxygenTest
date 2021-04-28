@@ -40,9 +40,12 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Corpse
+    uniqueID: 680726767
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Corpse
-    uniqueID: 680726767
+  - name: Environment
+    uniqueID: 3044531941
     locked: 0

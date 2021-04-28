@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class Enemy : Being
 {
 	[SerializeField] protected Attack attack;
+	protected GameObject target;
 	protected EnemyType type;
 	public new EnemyType GetType => type;
 
@@ -12,6 +13,7 @@ public abstract class Enemy : Being
 	{
 		base.Start();
 		beingType = BeingType.ENEMY;
+		target = GameObject.FindGameObjectWithTag("Player");
 	}
 }
 

@@ -5,54 +5,75 @@ using UnityEngine;
 public class Player : Being
 {
 	[SerializeField] public Attack[] attacks;
-	[SerializeField] float jumpHeight = 4;
-	[SerializeField] float timeToJumpApex = 0.4f;
-	[SerializeField] float invulnerabilityTime = 0.2f;
+	[SerializeField] int delayToJump = 2;
 
-	float jumpVelocity;
-	float invulnerabilityTimer;
+	int frameCounter = 0;
+	bool jump, reminder;
 
 	protected override void Start()
 	{
 		base.Start();
 		beingType = BeingType.PLAYER;
-		gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
-		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
+		UIManager.Instance.SetHP(health);
 	}
 
-	protected override void Update()
+	protected override void CollisionsUpdate()
 	{
-		base.Update();
-		if (isDie) return;
-
 		if (movement.collisions.above && velocity.y > 0)
 			velocity.y = 0;
 		else if (movement.collisions.below)
 		{
-			if (PlayerInput.Instance.GetPlayerInput.y > 0.4f)
+			inAir = false;
+			jump = false;
+			reminder = false; velocity.y = 0;
+		}
+		else 
+		{
+			inAir = true;
+			if (!jump && !reminder)
 			{
-				velocity.y = jumpVelocity;
-				inAir = true;
-			}
-			else
-			{
-				velocity.y = 0;
-				inAir = false;
+				frameCounter = Time.frameCount;
+				reminder = true;
 			}
 		}
-		else inAir = true;
 
-		if (forcedMovement)
+		Jump();
+	}
+
+	private void Jump()
+	{
+		if (PlayerInput.Instance.GetPlayerInput.y == -2)
+			movement.downThrough = false;
+		else if(PlayerInput.Instance.GetPlayerInput.y == -1)
+			movement.downThrough = true;
+
+		if (inAir)
 		{
-			forcedMovementVelocity.x += PlayerInput.Instance.GetPlayerInput.x * forcedMovementSpeed;
-			forcedMovementVelocity.y += gravity * Time.deltaTime;
-			movement.Move(forcedMovementVelocity * Time.deltaTime);
+			if (PlayerInput.Instance.GetPlayerInput.y == 2 && velocity.y > minJumpVelocity)
+				velocity.y = minJumpVelocity;
+
+			if (Time.frameCount - frameCounter > delayToJump)
+				return;
 		}
-		else
+
+		if(PlayerInput.Instance.GetPlayerInput.y == 1)
 		{
-			velocity.x = PlayerInput.Instance.GetPlayerInput.x * moveSpeed;
-			velocity.y += gravity * Time.deltaTime;
-			movement.Move(velocity * Time.deltaTime);
+			velocity.y = maxJumpVelocity;   //jump button is down
+			jump = true;
 		}
+	}
+
+	protected override void ForcedMovement()
+	{
+		forcedMovementVelocity.x += PlayerInput.Instance.GetPlayerInput.x * forcedMovementSpeed;
+		forcedMovementVelocity.y += gravity * Time.deltaTime;
+		movement.Move(forcedMovementVelocity * Time.deltaTime);
+	}
+
+	protected override void NormalMovement()
+	{
+		velocity.x = PlayerInput.Instance.GetPlayerInput.x * moveSpeed;
+		velocity.y += gravity * Time.deltaTime;
+		movement.Move(velocity * Time.deltaTime);
 	}
 }

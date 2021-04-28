@@ -14,6 +14,7 @@ public class Movement : MonoBehaviour
 
 	float horizontalRaySpacing;
 	float verticalRaySpacing;
+	public bool downThrough;
 
 	new BoxCollider2D collider;
 	public BoxCollider2D GetCollider => collider;
@@ -52,7 +53,6 @@ public class Movement : MonoBehaviour
 	void HorizontalCollisions(ref Vector3 velocity)
 	{
 		float directionX = Mathf.Sign(velocity.x);
-		float directionY = Mathf.Sign(velocity.y);
 		float rayLength = Mathf.Abs(velocity.x) + skinWidth;
 
 		for (int i = 0; i < horizontalRayCount; i++)
@@ -60,10 +60,7 @@ public class Movement : MonoBehaviour
 			Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
 			rayOrigin += Vector2.up * (horizontalRaySpacing * i);
 			RaycastHit2D hit;
-			if (directionY > 0)
-				hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, headCollsitionMask);
-			else
-				hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, collisionMask);
+			hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, headCollsitionMask);
 
 			Debug.DrawRay(rayOrigin, Vector2.right * directionX * rayLength, Color.red);
 
@@ -89,7 +86,7 @@ public class Movement : MonoBehaviour
 			Vector2 rayOrigin = (directionY == -1) ? raycastOrigins.bottomLeft : raycastOrigins.topLeft;
 			rayOrigin += Vector2.right * (verticalRaySpacing * i + velocity.x);
 			RaycastHit2D hit;
-			if (directionY > 0)
+			if (directionY > 0 || downThrough)
 				hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, headCollsitionMask);
 			else
 				hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, collisionMask);

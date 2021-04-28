@@ -27,6 +27,11 @@ PrefabInstance:
       propertyPath: forcedMovementSpeed
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 1145250114996419206, guid: 8623f4450f7a46448aa6337a619ec64e,
+        type: 3}
+      propertyPath: jumpChance
+      value: 0.001
+      objectReference: {fileID: 0}
     - target: {fileID: 3898137811220127078, guid: 8623f4450f7a46448aa6337a619ec64e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -96,7 +101,7 @@ PrefabInstance:
     - target: {fileID: 6854331969867563164, guid: 8623f4450f7a46448aa6337a619ec64e,
         type: 3}
       propertyPath: headCollsitionMask.m_Bits
-      value: 768
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 7039483512147096916, guid: 8623f4450f7a46448aa6337a619ec64e,
         type: 3}

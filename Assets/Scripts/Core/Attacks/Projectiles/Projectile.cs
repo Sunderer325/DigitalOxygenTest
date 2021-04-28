@@ -8,18 +8,17 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     [SerializeField] int damage = 1;
+    [SerializeField] protected float knockbackForce = 5f;
     [SerializeField] protected float gravity = -9.8f;
     [SerializeField] bool destroyOnTTL = true;
     [SerializeField] float timeToLive = 5f;
 
     protected Vector2 velocity;
+    Vector2 initialVelocity;
     BeingType ownerType;
 
     Vector2 damageBox;
     LayerMask damageMask;
-
-    float cooldown = 0.1f;
-    float cooldownReminder;
 
     protected Movement movement;
     BoxCollider2D collider;
@@ -59,16 +58,16 @@ public class Projectile : MonoBehaviour
         Collider2D hit = Physics2D.OverlapBox(transform.position, damageBox, 0,  damageMask);
         if (hit)
         {
-            if(Time.unscaledTime - cooldownReminder > cooldown)
-            {
-                hit.transform.GetComponent<Being>().GetDamage(damage, Vector2.zero);
-                cooldownReminder = Time.unscaledTime;
-            }
+            Vector2 knockbackDirection = hit.transform.position - transform.position;
+            float mulDesiredForce = velocity.sqrMagnitude / initialVelocity.sqrMagnitude;
+            Vector2 knockback = knockbackDirection * (knockbackForce * mulDesiredForce);
+            hit.transform.GetComponent<Being>().GetDamage(damage, knockback);
         }
     }
 
     private void AddForce(Vector2 force)
     {
+        initialVelocity = force;
         velocity.x += force.x;
         velocity.y += force.y;
     }

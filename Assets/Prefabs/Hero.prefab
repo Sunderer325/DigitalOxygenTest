@@ -146,16 +146,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 5
+  invulnerabilityTime: 1
   moveSpeed: 6
   forcedMovementSpeed: 0.2
-  gravity: 0
+  maxJumpHeight: 4.5
+  minJumpHeight: 1
+  timeToJumpApex: 0.5
   attacks:
   - {fileID: 11400000, guid: c396b17e945d41349845ca361a7bd152, type: 2}
   - {fileID: 11400000, guid: 4bfef06bab4b41b4bb31c516b28e7b8e, type: 2}
-  jumpHeight: 5
-  timeToJumpApex: 0.5
-  invulnerabilityTime: 0.2
-  turnSide: {x: 0, y: 0}
+  delayToJump: 10
 --- !u!114 &4774130686413929776
 MonoBehaviour:
   m_ObjectHideFlags: 0

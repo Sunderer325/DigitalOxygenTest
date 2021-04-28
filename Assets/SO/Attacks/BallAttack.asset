@@ -17,4 +17,4 @@ MonoBehaviour:
   knockbackForce: 0
   projectile: {fileID: 3578806632270111350, guid: 897bcde3e9dd6d6499955e43fb86fdb0,
     type: 3}
-  force: 20
+  force: 25

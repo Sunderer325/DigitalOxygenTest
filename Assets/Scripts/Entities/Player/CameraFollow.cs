@@ -23,9 +23,7 @@ public class CameraFollow : MonoBehaviour
         if (target)
         {
             float desiredY = target.transform.position.y;
-            if (target.transform.position.y > maxY)
-                desiredY = maxY;
-            else if (target.transform.position.y < minY)
+            if (target.transform.position.y < minY)
                 desiredY = minY;
             transform.position = new Vector3(transform.position.x, desiredY, transform.position.z);
         }

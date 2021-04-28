@@ -5,9 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "SpearAttack")]
 public class SpearAttack : Attack
 {
-    public override void Action(Vector2 origin, Vector2 target, BeingType type)
+    public override GameObject Action(Vector2 origin, Vector2 target, BeingType type)
     {
         IsCooldownEnd();
         Debug.Log("SPEAR ATTACK");
+        return null;
     }
 }

@@ -32,5 +32,5 @@ public abstract class Attack : ScriptableObject
         }
         return false;
     }
-    public abstract void Action(Vector2 origin, Vector2 target, BeingType beingType);
+    public abstract GameObject Action(Vector2 origin, Vector2 target, BeingType beingType);
 }

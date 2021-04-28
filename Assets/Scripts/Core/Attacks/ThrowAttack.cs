@@ -8,11 +8,12 @@ public class ThrowAttack : Attack
     [SerializeField] GameObject projectile;
     [SerializeField] float force = 1f;
 
-    public override void Action(Vector2 origin, Vector2 target, BeingType type)
+    public override GameObject Action(Vector2 origin, Vector2 target, BeingType type)
     {
         if (!IsCooldownEnd())
-            return;
+            return null;
         GameObject instantiated = Instantiate(projectile, origin, Quaternion.identity);
         instantiated.GetComponent<Projectile>().Init(target * force, type);
+        return null;
     }
 }

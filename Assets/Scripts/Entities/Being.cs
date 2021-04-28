@@ -6,34 +6,51 @@ using UnityEngine;
 [RequireComponent(typeof(Animation))]
 public abstract class Being : MonoBehaviour
 {
+	[Header("Stats")]
 	[SerializeField] protected int health;
-	[SerializeField] protected float moveSpeed = 6f;
-	[SerializeField] protected float forcedMovementSpeed = 2f;
-	[SerializeField] protected float gravity = -0.1f;
+	[SerializeField] float invulnerabilityTime = 0.1f;
 
 	float afterDeathTimer = 10f;
 	float afterDeathFriction = 0.5f;
-	protected bool forcedMovement;
-	protected Vector3 forcedMovementVelocity;
+	float invulnerabilityTimer;
+	bool invulnerability;
 
-	protected Vector2 velocity;
-	public Vector2 Velocity => velocity; 
+	[Header("Physics")]
+	[SerializeField] protected float moveSpeed = 6f;
+	[SerializeField] protected float forcedMovementSpeed = 2f;
+	[SerializeField] protected float maxJumpHeight = 4;
+	[SerializeField] protected float minJumpHeight = 1;
+	[SerializeField] protected float timeToJumpApex = 0.4f;
 
-	protected bool inAir;
-	public bool InAir => inAir; 
-
-	protected bool isDie;
-	public bool IsDie => isDie;
-	protected BeingType beingType;
-	public BeingType GetBeingType => beingType;
+	protected float gravity = -0.1f;
+	protected float maxJumpVelocity;
+	protected float minJumpVelocity;
 
 	protected Movement movement;
 	Animation animation;
+
+	protected bool forcedMovement;
+	protected Vector2 forcedMovementVelocity;
+	protected Vector2 velocity;
+	protected bool inAir;
+	protected bool isDie;
+	protected BeingType beingType;
+
+	public bool Invulnerability => invulnerability;
+	public Vector2 ForcedMovementVelocity => forcedMovementVelocity;
+	public Vector2 Velocity => velocity; 
+	public bool InAir => inAir; 
+	public bool IsDie => isDie;
+	public BeingType GetBeingType => beingType;
 
 	protected virtual void Start()
 	{
 		movement = GetComponent<Movement>();
 		animation = GetComponent<Animation>();
+
+		gravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
+		maxJumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
+		minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(gravity) * minJumpHeight);
 	}
 
 	protected virtual void Update()
@@ -47,7 +64,28 @@ public abstract class Being : MonoBehaviour
 			forcedMovement = false;
 			forcedMovementVelocity = Vector2.zero;
 		}
+		if (invulnerability)
+		{
+			if(invulnerabilityTimer >= invulnerabilityTime)
+			{
+				invulnerability = false;
+				invulnerabilityTimer = 0f;
+			}
+			else
+			{
+				invulnerabilityTimer += Time.deltaTime;
+			}
+		}
+		CollisionsUpdate();
+
+		if (isDie) return;
+		if (forcedMovement)
+			ForcedMovement();
+		else NormalMovement();
 	}
+	protected abstract void NormalMovement();
+	protected abstract void ForcedMovement();
+	protected abstract void CollisionsUpdate();
 
 	void AfterDeathUpdate()
 	{
@@ -56,12 +94,16 @@ public abstract class Being : MonoBehaviour
 			velocity.x *= afterDeathFriction;
 			inAir = false;
 		}
-		velocity.y += gravity * Time.deltaTime;
-		movement.Move(velocity * Time.deltaTime);
+		forcedMovementVelocity.y += gravity * Time.deltaTime;
+		movement.Move(forcedMovementVelocity * Time.deltaTime);
 	}
 
 	public virtual void GetDamage(int damage, Vector2 force)
 	{
+		if (invulnerability)
+			return;
+		invulnerability = true;
+
 		health -= damage;
 		animation.GetHit();
 
@@ -83,7 +125,8 @@ public abstract class Being : MonoBehaviour
 			forcedMovementVelocity = force;
 			movement.Move(forcedMovementVelocity * Time.deltaTime);
 		}
-
+		if (beingType == BeingType.PLAYER)
+			UIManager.Instance.SetHP(health);
 	}
 }
 

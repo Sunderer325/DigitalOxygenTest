@@ -8,7 +8,9 @@ public class EntityManager : MonoBehaviour
     [SerializeField] GameObject player;
     [SerializeField] GameObject playerSpawnPoint;
     [Header("Enemies")]
-    [SerializeField, Range(1, 100)] int enemiesMax;
+    [SerializeField] bool disableSpawning;
+    [SerializeField] float delayAfterInit = 2f;
+    [SerializeField] int enemiesMax = 100;
     [SerializeField] Enemy[] enemies;
     [SerializeField, Min(0.1f)] float spawnTime;
     [SerializeField] BoxCollider2D spawnZone;
@@ -16,6 +18,7 @@ public class EntityManager : MonoBehaviour
     int enemiesSpawnCounter;
     int enemiesDeathCounter;
     float spawnTimer;
+    float delayTimer;
     GameObject playerInstance;
 
     private static EntityManager _instance;
@@ -31,14 +34,21 @@ public class EntityManager : MonoBehaviour
 
     private void Start()
     {
-        enemiesDeathCounter = enemiesSpawnCounter = Random.Range(1, enemiesMax);
+        enemiesDeathCounter = enemiesSpawnCounter = enemiesMax;
         UIManager.Instance.counter.text = enemiesDeathCounter.ToString();
 
         playerInstance = Instantiate(player, playerSpawnPoint.transform.position, Quaternion.identity);
         CameraFollow.Instance.target = playerInstance;
+        delayTimer = Time.unscaledTime;
     }
     private void Update()
     {
+        if (disableSpawning)
+            return;
+
+        if (Time.unscaledTime - delayTimer < delayAfterInit)
+            return;
+
         if (enemiesSpawnCounter <= 0)
             return;
 

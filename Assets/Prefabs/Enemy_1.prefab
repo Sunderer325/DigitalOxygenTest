@@ -123,7 +123,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 0.875, y: 0.875}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -149,10 +149,11 @@ MonoBehaviour:
     m_Bits: 768
   headCollsitionMask:
     serializedVersion: 2
-    m_Bits: 768
+    m_Bits: 256
   skinWidth: 0.015
   horizontalRayCount: 4
   verticalRayCount: 4
+  downThrough: 0
 --- !u!114 &1145250114996419206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,10 +167,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 1
+  invulnerabilityTime: 0.1
   moveSpeed: 3
   forcedMovementSpeed: 2
-  gravity: -40
+  maxJumpHeight: 4.5
+  minJumpHeight: 1
+  timeToJumpApex: 0.6
   attack: {fileID: 11400000, guid: 54ff5b0f18a47c14e9895cc95720d247, type: 2}
+  jumpChance: 0.002
 --- !u!114 &5101543761580861628
 MonoBehaviour:
   m_ObjectHideFlags: 0

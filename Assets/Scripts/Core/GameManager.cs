@@ -67,12 +67,14 @@ public class GameManager : MonoBehaviour
         TimeSpan time = TimeSpan.FromSeconds(Time.unscaledTime - gameTime);
         UIManager.Instance.ShowMenu("You Win!", "Your time:\n" + time.ToString(@"h\:mm\:ss\.ffff"));
         Time.timeScale = 0;
+        inMenu = true;
     }
 
     public void OnLose()
     {
         UIManager.Instance.ShowMenu("You Lose!", "");
         Time.timeScale = 0;
+        inMenu = true;
     }
 
     public void OnPause()
