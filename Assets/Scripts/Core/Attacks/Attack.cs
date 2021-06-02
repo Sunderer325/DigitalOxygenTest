@@ -6,8 +6,7 @@ using UnityEngine;
 public abstract class Attack : ScriptableObject
 {
     [SerializeField] float coolDown = 0;
-    [SerializeField] protected int damage = 1;
-    [SerializeField] protected float knockbackForce = 5f;
+
     protected float lastTime = 0;
 
     private void OnEnable()
@@ -32,5 +31,5 @@ public abstract class Attack : ScriptableObject
         }
         return false;
     }
-    public abstract GameObject Action(Vector2 origin, Vector2 target, BeingType beingType);
+    public abstract void Action(Vector2 origin, Vector2 target, Being owner);
 }

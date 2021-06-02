@@ -10,19 +10,15 @@ public class FlyingEnemy : Enemy
         type = EnemyType.AIR;
     }
 
-    // Update is called once per frame
-    protected override void Update()
+    protected override bool AttackTarget()
     {
-        base.Update();
-        if (isDie) return;
-
-        GameObject target = attack.Action(transform.position, Vector2.zero, beingType);
-        if (target)
+        if (base.AttackTarget())
         {
-            //velocity = new Vector2(velocity.x, velocity.y * -1) * 5;
             forcedMovement = true;
-            forcedMovementVelocity = new Vector2(velocity.x * -1, velocity.y * -1);
+            forcedMovementVelocity = -velocity;
+            return true;
         }
+        return false;
     }
 
     protected override void CollisionsUpdate(){}

@@ -7,6 +7,9 @@ public class Player : Being
 	[SerializeField] public Attack[] attacks;
 	[SerializeField] int delayToJump = 2;
 
+	[Header("Events")]
+	[SerializeField] private IntEvent OnHealthChanged;
+
 	int frameCounter = 0;
 	bool jump, reminder;
 
@@ -19,6 +22,16 @@ public class Player : Being
 
 	protected override void CollisionsUpdate()
 	{
+		if (invulnerability)
+		{
+			movement.collisionMask = LayerMask.GetMask("Obstacle", "Platform");
+			movement.headCollisionMask = LayerMask.GetMask("Obstacle");
+		}
+		else
+		{
+			movement.collisionMask = LayerMask.GetMask("Obstacle", "Platform", "Enemy");
+			movement.headCollisionMask = LayerMask.GetMask("Obstacle", "Enemy");
+		}
 		if (movement.collisions.above && velocity.y > 0)
 			velocity.y = 0;
 		else if (movement.collisions.below)
@@ -75,5 +88,17 @@ public class Player : Being
 		velocity.x = PlayerInput.Instance.GetPlayerInput.x * moveSpeed;
 		velocity.y += gravity * Time.deltaTime;
 		movement.Move(velocity * Time.deltaTime);
+	}
+
+	public override void GetDamage(int damage, Vector2 force)
+	{
+		base.GetDamage(damage, force);
+		OnHealthChanged.Raise(health);
+	}
+
+	protected override void Die()
+	{
+		base.Die();
+		EntityManager.Instance.OnPlayerDie();
 	}
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class EntityManager : MonoBehaviour
 {
     [Header("Player")]
-    [SerializeField] GameObject player;
+    [SerializeField] GameObject[] heroes;
     [SerializeField] GameObject playerSpawnPoint;
     [Header("Enemies")]
     [SerializeField] bool disableSpawning;
@@ -20,6 +20,7 @@ public class EntityManager : MonoBehaviour
     float spawnTimer;
     float delayTimer;
     GameObject playerInstance;
+    CameraAnimation cameraAnim;
 
     private static EntityManager _instance;
     public static EntityManager Instance
@@ -37,9 +38,11 @@ public class EntityManager : MonoBehaviour
         enemiesDeathCounter = enemiesSpawnCounter = enemiesMax;
         UIManager.Instance.counter.text = enemiesDeathCounter.ToString();
 
-        playerInstance = Instantiate(player, playerSpawnPoint.transform.position, Quaternion.identity);
+        playerInstance = Instantiate(heroes[GameManager.Instance.selectedHero], playerSpawnPoint.transform.position, Quaternion.identity);
         CameraFollow.Instance.target = playerInstance;
         delayTimer = Time.unscaledTime;
+
+        cameraAnim = CameraFollow.Instance.gameObject.GetComponent<CameraAnimation>();
     }
     private void Update()
     {
@@ -74,6 +77,12 @@ public class EntityManager : MonoBehaviour
         UIManager.Instance.counter.text = enemiesDeathCounter.ToString();
         if (enemiesDeathCounter <= 0)
             GameManager.Instance.OnWin();
+        cameraAnim.OnEnemyKilled();
+    }
+
+    public void OnPlayerHit()
+    {
+        cameraAnim.OnPlayerHit();
     }
 
     public void OnPlayerDie()

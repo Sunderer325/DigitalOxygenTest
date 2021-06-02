@@ -21,7 +21,7 @@ TagManager:
   - Corpse
   - Player
   - Ceiling
-  - 
+  - EnemyAttackCollider
   - 
   - 
   - 

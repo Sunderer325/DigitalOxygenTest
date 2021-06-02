@@ -3,20 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Movement))]
-[RequireComponent(typeof(Animation))]
+[RequireComponent(typeof(BeingAnimation))]
 public abstract class Being : MonoBehaviour
 {
-	[Header("Stats")]
-	[SerializeField] protected int health;
-	[SerializeField] float invulnerabilityTime = 0.1f;
-
-	float afterDeathTimer = 10f;
-	float afterDeathFriction = 0.5f;
-	float invulnerabilityTimer;
-	bool invulnerability;
-
+	#region Physics properties
 	[Header("Physics")]
 	[SerializeField] protected float moveSpeed = 6f;
+	[SerializeField] protected float moveSpeedOnStunning = 1f;
 	[SerializeField] protected float forcedMovementSpeed = 2f;
 	[SerializeField] protected float maxJumpHeight = 4;
 	[SerializeField] protected float minJumpHeight = 1;
@@ -25,28 +18,49 @@ public abstract class Being : MonoBehaviour
 	protected float gravity = -0.1f;
 	protected float maxJumpVelocity;
 	protected float minJumpVelocity;
+	#endregion
 
+	#region Stats properties
+	[Header("Stats")]
+	[SerializeField] protected int health;
+	[SerializeField] float invulnerabilityTime = 0.1f;
+
+	float afterDeathTimer = 10f;
+	float afterDeathFriction = 0.5f;
+	float invulnerabilityTimer;
+	[HideInInspector] public bool invulnerability;
+	[SerializeField] protected float forcedMovementTime = 0.3f;
+	
+	protected bool stunning;
+	float stunTime;
+	float remindSpeed;
+	#endregion
+
+	#region Other protected properties
 	protected Movement movement;
-	Animation animation;
-
+	protected BeingAnimation animation;
 	protected bool forcedMovement;
 	protected Vector2 forcedMovementVelocity;
+	protected float forcedMovementTimer;
 	protected Vector2 velocity;
 	protected bool inAir;
 	protected bool isDie;
 	protected BeingType beingType;
+	#endregion
 
+	#region Public properties
 	public bool Invulnerability => invulnerability;
 	public Vector2 ForcedMovementVelocity => forcedMovementVelocity;
 	public Vector2 Velocity => velocity; 
 	public bool InAir => inAir; 
 	public bool IsDie => isDie;
 	public BeingType GetBeingType => beingType;
+	#endregion
 
 	protected virtual void Start()
 	{
 		movement = GetComponent<Movement>();
-		animation = GetComponent<Animation>();
+		animation = GetComponent<BeingAnimation>();
 
 		gravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
 		maxJumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
@@ -55,18 +69,54 @@ public abstract class Being : MonoBehaviour
 
 	protected virtual void Update()
 	{
-		if (isDie && afterDeathTimer > 0) { 
-			AfterDeathUpdate();
-			afterDeathTimer -= Time.deltaTime;
-		}
-		if (forcedMovement && movement.collisions.any)
+		if (GameManager.Instance.GetState != GameStates.GAME)
+			return;
+
+		CollisionsUpdate();
+
+		if (isDie)
 		{
-			forcedMovement = false;
-			forcedMovementVelocity = Vector2.zero;
+			AfterDeathUpdate();
+			return;
 		}
+		InvulnerabilityUpdate();
+		if (forcedMovement)
+		{
+			ForcedMovement();
+			ForcedUpdate();
+		}
+		else NormalMovement();
+
+		if (stunning)
+		{
+			if(stunTime <= 0f)
+			{
+				stunning = false;
+				moveSpeed = remindSpeed;
+				return;
+			}
+			stunTime -= Time.deltaTime;
+		}
+	}
+	protected abstract void CollisionsUpdate();
+	protected abstract void NormalMovement();
+	protected abstract void ForcedMovement();
+	void AfterDeathMovement()
+	{
+		if (movement.collisions.below)
+		{
+			velocity.x *= afterDeathFriction;
+			inAir = false;
+		}
+		velocity.y += gravity * Time.deltaTime;
+		movement.Move(velocity * Time.deltaTime);
+	}
+
+	void InvulnerabilityUpdate()
+	{
 		if (invulnerability)
 		{
-			if(invulnerabilityTimer >= invulnerabilityTime)
+			if (invulnerabilityTimer >= invulnerabilityTime)
 			{
 				invulnerability = false;
 				invulnerabilityTimer = 0f;
@@ -76,26 +126,30 @@ public abstract class Being : MonoBehaviour
 				invulnerabilityTimer += Time.deltaTime;
 			}
 		}
-		CollisionsUpdate();
-
-		if (isDie) return;
-		if (forcedMovement)
-			ForcedMovement();
-		else NormalMovement();
 	}
-	protected abstract void NormalMovement();
-	protected abstract void ForcedMovement();
-	protected abstract void CollisionsUpdate();
-
+	void ForcedUpdate()
+	{
+		if (forcedMovementTimer > forcedMovementTime)
+		{
+			if (movement.collisions.any)
+			{
+				forcedMovementTimer = 0f;
+				forcedMovement = false;
+				forcedMovementVelocity = Vector2.zero;
+			}
+		}
+		else
+		{
+			forcedMovementTimer += Time.deltaTime;
+		}
+	}
 	void AfterDeathUpdate()
 	{
-		if (movement.collisions.below)
+		if (afterDeathTimer > 0)
 		{
-			velocity.x *= afterDeathFriction;
-			inAir = false;
+			afterDeathTimer -= Time.deltaTime;
 		}
-		forcedMovementVelocity.y += gravity * Time.deltaTime;
-		movement.Move(forcedMovementVelocity * Time.deltaTime);
+		AfterDeathMovement();
 	}
 
 	public virtual void GetDamage(int damage, Vector2 force)
@@ -105,28 +159,38 @@ public abstract class Being : MonoBehaviour
 		invulnerability = true;
 
 		health -= damage;
+
 		animation.GetHit();
-
-		if (health <= 0)
-		{
-			isDie = true;
-			velocity = Vector2.zero;
-			gameObject.layer = LayerMask.NameToLayer("Corpse");
-
-			if (beingType == BeingType.ENEMY)
-				EntityManager.Instance.OnEnemyDie();
-			else if (beingType == BeingType.PLAYER)
-				EntityManager.Instance.OnPlayerDie();
-		}
 
 		if(force != Vector2.zero)
 		{
 			forcedMovement = true;
 			forcedMovementVelocity = force;
-			movement.Move(forcedMovementVelocity * Time.deltaTime);
+			//movement.Move((forcedMovementVelocity - velocity) * Time.deltaTime);
 		}
-		if (beingType == BeingType.PLAYER)
-			UIManager.Instance.SetHP(health);
+
+		if (health <= 0)
+		{
+			Die();
+		}
+	}
+	public void Stunning(float onTime)
+	{
+		stunning = true;
+		stunTime = onTime;
+		remindSpeed = moveSpeed;
+		moveSpeed = moveSpeedOnStunning;
+	}
+
+	protected virtual void Die()
+	{
+		isDie = true;
+		velocity = forcedMovementVelocity;
+		gameObject.layer = LayerMask.NameToLayer("Corpse");
+		gameObject.tag = "Untagged";
+		movement.collisionMask = LayerMask.GetMask("Obstacle", "Platform");
+		movement.headCollisionMask = LayerMask.GetMask("Obstacle", "Platform");
+		GetComponent<SpriteRenderer>().sortingLayerName = "Corpse";
 	}
 }
 

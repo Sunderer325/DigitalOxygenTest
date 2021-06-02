@@ -6,8 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider2D))]
 public class Movement : MonoBehaviour
 {
-	[SerializeField] LayerMask collisionMask;
-	[SerializeField] LayerMask headCollsitionMask;
+	public LayerMask collisionMask;
+	public LayerMask headCollisionMask;
 	[SerializeField] float skinWidth = .015f;
 	[SerializeField] int horizontalRayCount = 4;
 	[SerializeField] int verticalRayCount = 4;
@@ -31,9 +31,12 @@ public class Movement : MonoBehaviour
 
 	public void Move(Vector3 velocity)
 	{
-		UpdateRaycastOrigins();
-		UpdateCollisions(ref velocity);
-		transform.Translate(velocity);
+		if (collisionMask != 0 || headCollisionMask != 0)
+		{
+			UpdateRaycastOrigins();
+			UpdateCollisions(ref velocity);
+		}
+		transform.Translate(velocity, Space.World);
 	}
 
 	public void UpdateCollisions(ref Vector3 velocity)
@@ -58,11 +61,11 @@ public class Movement : MonoBehaviour
 		for (int i = 0; i < horizontalRayCount; i++)
 		{
 			Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
-			rayOrigin += Vector2.up * (horizontalRaySpacing * i);
+			rayOrigin += (Vector2)transform.up * (horizontalRaySpacing * i);
 			RaycastHit2D hit;
-			hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, headCollsitionMask);
+			hit = Physics2D.Raycast(rayOrigin, (Vector2)transform.right * directionX, rayLength, headCollisionMask);
 
-			Debug.DrawRay(rayOrigin, Vector2.right * directionX * rayLength, Color.red);
+			Debug.DrawRay(rayOrigin, (Vector2)transform.right * directionX * rayLength, Color.red);
 
 			if (hit)
 			{
@@ -72,6 +75,7 @@ public class Movement : MonoBehaviour
 				collisions.left = directionX == -1;
 				collisions.right = directionX == 1;
 				collisions.any = true;
+				collisions.target = hit.collider;
 			}
 		}
 	}
@@ -84,12 +88,12 @@ public class Movement : MonoBehaviour
 		for (int i = 0; i < verticalRayCount; i++)
 		{
 			Vector2 rayOrigin = (directionY == -1) ? raycastOrigins.bottomLeft : raycastOrigins.topLeft;
-			rayOrigin += Vector2.right * (verticalRaySpacing * i + velocity.x);
+			rayOrigin += (Vector2)transform.right * (verticalRaySpacing * i + velocity.x);
 			RaycastHit2D hit;
 			if (directionY > 0 || downThrough)
-				hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, headCollsitionMask);
+				hit = Physics2D.Raycast(rayOrigin, (Vector2)transform.up * directionY, rayLength, headCollisionMask);
 			else
-				hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, collisionMask);
+				hit = Physics2D.Raycast(rayOrigin, (Vector2)transform.up * directionY, rayLength, collisionMask);
 
 			Debug.DrawRay(rayOrigin, Vector2.up * directionY * rayLength, Color.red);
 
@@ -101,6 +105,7 @@ public class Movement : MonoBehaviour
 				collisions.below = directionY == -1;
 				collisions.above = directionY == 1;
 				collisions.any = true;
+				collisions.target = hit.collider;
 			}
 		}
 	}
@@ -139,12 +144,14 @@ public class Movement : MonoBehaviour
 		public bool above, below;
 		public bool left, right;
 		public bool any;
+		public Collider2D target;
 
 		public void Reset()
 		{
 			above = below = false;
 			left = right = false;
 			any = false;
+			target = null;
 		}
 	}
 

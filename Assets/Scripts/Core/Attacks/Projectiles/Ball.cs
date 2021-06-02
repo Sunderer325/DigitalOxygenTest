@@ -8,36 +8,40 @@ public class Ball : Projectile
     [SerializeField, Range(0f, 1f)] float friction = 0.8f;
     [SerializeField] float stopDamage = 0.0f;
 
-    bool gravityIsOn;
-
     // Update is called once per frame
     protected override void Update()
     {
+        base.Update();
+
         if (movement.collisions.above || movement.collisions.below)
         {
             velocity.y *= -1 * bounciness;
             velocity.x *= friction;
-            gravityIsOn = true;
         }
         else
         {
-            //if(gravityIsOn)
-                velocity.y += gravity;
+            velocity.y += gravity * Time.deltaTime;
         }
 
         if (movement.collisions.left || movement.collisions.right)
         {
             velocity.x *= -1 * bounciness;
-            gravityIsOn = true;
         }
-
-        movement.Move(velocity * Time.deltaTime);
-        base.Update();
     }
 
     protected override void DetectVictim()
     {
-        if (velocity.sqrMagnitude > stopDamage)
-            base.DetectVictim();
+        if (velocity.sqrMagnitude > stopDamage && movement.collisions.any)
+            //if(movement.collisions.target.gameObject.CompareTag("Enemy"))
+                base.DetectVictim();
+    }
+
+    protected override void Hit(Collider2D hit)
+    {
+        Vector2 knockbackDirection = hit.transform.position - transform.position;
+        float mulDesiredForce = velocity.sqrMagnitude / initialVelocity.sqrMagnitude;
+        Vector2 knockback = knockbackDirection * (knockbackForce * mulDesiredForce);
+
+        hit.transform.GetComponent<Being>().GetDamage(damage, knockback);
     }
 }

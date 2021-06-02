@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coolDown: 1
   damage: 1
-  knockbackForce: 12
-  biteRadius: 0.5
+  damageRadius: 0.5
+  knockbackForce: 5
   knockbackY: 0.75

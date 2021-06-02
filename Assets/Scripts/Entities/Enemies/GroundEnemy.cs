@@ -21,22 +21,17 @@ public class GroundEnemy : Enemy
 		base.Update();
 		if (isDie) return;
 
-		attackPosition = (Vector2)transform.position + movement.GetCollider.offset;
-		attack.Action(attackPosition, Vector2.zero, beingType);
-
-		float deltaY = target.transform.position.y - transform.position.y;
-		if (deltaY < maxJumpHeight && !forcedMovement)
+		Vector2 delta = target.transform.position - transform.position;
+		if (Math.Abs(delta.x) < 2 && delta.y < maxJumpHeight && delta.y > 1)
 		{
-			Jump();
+			if(!forcedMovement && stunning)
+				Jump();
 		}
-		if (target.transform.position.y < transform.position.y + 0.2f
-			&& target.transform.position.y > transform.position.y - 0.2f)
-			TurnToTargetDirection();
 	}
 
 	void Jump()
 	{
-		if (UnityEngine.Random.value > jumpChance)
+		if (UnityEngine.Random.value > jumpChance * Time.fixedDeltaTime)
 			return;
 
 		TurnToTargetDirection();
@@ -62,7 +57,7 @@ public class GroundEnemy : Enemy
 	protected override void NormalMovement()
 	{
 		velocity.x = moveDir * moveSpeed;
-		if(Mathf.Abs(velocity.y) < 20f)
+		if(Mathf.Abs(velocity.y) < 10f)
 			velocity.y += gravity * Time.deltaTime;
 		movement.Move(velocity * Time.deltaTime);
 	}

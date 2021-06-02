@@ -3,31 +3,28 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(Movement))]
 public class Projectile : MonoBehaviour
 {
-    [SerializeField] int damage = 1;
+    [SerializeField] protected int damage = 1;
+    [SerializeField] protected float damageRadius = 0.5f;
     [SerializeField] protected float knockbackForce = 5f;
     [SerializeField] protected float gravity = -9.8f;
-    [SerializeField] bool destroyOnTTL = true;
-    [SerializeField] float timeToLive = 5f;
+    [SerializeField] protected bool destroyOnTTL = true;
+    [SerializeField] protected float timeToLive = 5f;
 
     protected Vector2 velocity;
-    Vector2 initialVelocity;
-    BeingType ownerType;
+    protected Vector2 initialVelocity;
+    protected BeingType ownerType;
+    protected Being owner;
 
-    Vector2 damageBox;
-    LayerMask damageMask;
+    protected LayerMask damageMask;
 
     protected Movement movement;
-    BoxCollider2D collider;
 
-    private void Start()
+    protected virtual void Start()
     {
         movement = GetComponent<Movement>();
-        collider = GetComponent<BoxCollider2D>();
-        damageBox = new Vector2(movement.GetSkinWidth + collider.bounds.size.x, movement.GetSkinWidth + collider.bounds.size.y);
     }
 
     protected virtual void Update()
@@ -38,14 +35,16 @@ public class Projectile : MonoBehaviour
             if (timeToLive < 0f)
                 Destroy(gameObject);
         }
+
         DetectVictim();
+        movement.Move(velocity * Time.deltaTime);
     }
 
-    public void Init(Vector2 force, BeingType ownerType)
+    public virtual void Init(Vector2 force,  Being owner)
     {
         AddForce(force);
-        this.ownerType = ownerType;
-
+        this.owner = owner;
+        this.ownerType = owner.GetBeingType;
         if (ownerType == BeingType.ENEMY)
             damageMask = LayerMask.GetMask("Player");
         else if (ownerType == BeingType.PLAYER)
@@ -54,15 +53,18 @@ public class Projectile : MonoBehaviour
 
     protected virtual void DetectVictim()
     {
-
-        Collider2D hit = Physics2D.OverlapBox(transform.position, damageBox, 0,  damageMask);
-        if (hit)
+        Collider2D hit;
+        hit = Physics2D.OverlapCircle((Vector2)transform.position, damageRadius, damageMask);
+        if(hit)
         {
-            Vector2 knockbackDirection = hit.transform.position - transform.position;
-            float mulDesiredForce = velocity.sqrMagnitude / initialVelocity.sqrMagnitude;
-            Vector2 knockback = knockbackDirection * (knockbackForce * mulDesiredForce);
-            hit.transform.GetComponent<Being>().GetDamage(damage, knockback);
+            Hit(hit);
         }
+    }
+
+    protected virtual void Hit(Collider2D hit) {
+        Vector2 knockbackDirection = hit.transform.position - transform.position;
+        Vector2 knockback = knockbackDirection * knockbackForce;
+        hit.transform.GetComponent<Being>().GetDamage(damage, knockback);
     }
 
     private void AddForce(Vector2 force)
@@ -70,11 +72,5 @@ public class Projectile : MonoBehaviour
         initialVelocity = force;
         velocity.x += force.x;
         velocity.y += force.y;
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireCube(transform.position, damageBox);
     }
 }

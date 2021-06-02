@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ce144f3b05749f4fba0cc6a5958d713, type: 3}
+  m_Name: SpyderThrowAttack
+  m_EditorClassIdentifier: 
+  coolDown: 1
+  damage: 0
+  damageRadius: 0
+  knockbackForce: 0
+  projectile: {fileID: 6763900272754020980, guid: 6b84df5c90fee294aaba87b35dc42cc9,
+    type: 3}
+  force: 1
