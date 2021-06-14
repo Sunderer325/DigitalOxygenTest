@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
 {
     Player player;
+    new AudioPrefab audio;
     private static PlayerInput _instance;
     public static PlayerInput Instance
     {
@@ -23,10 +22,15 @@ public class PlayerInput : MonoBehaviour
     private void Start()
     {
         player = GetComponent<Player>();
+        audio = GetComponent<AudioPrefab>();
     }
 
     private void Update()
     {
+        if (GameManager.Instance.GameState != GameStates.GAME &&
+            GameManager.Instance.GameState != GameStates.WIN)
+            return;
+
         playerInput.x = Input.GetAxisRaw("Horizontal");
         if (Input.GetButtonDown("Jump"))
         {
@@ -54,7 +58,16 @@ public class PlayerInput : MonoBehaviour
     }
     public void Attack(int attackId)
     {
-        Vector2 direction = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-        player.attacks[attackId].Action(player.gameObject.transform.position, direction.normalized, player);
+        if (player.attacks[attackId].IsCooldownEnd())
+        {
+            if (attackId == 0)
+                audio.Play("hero_pri_attack");
+            else
+                audio.Play("hero_sec_attack");
+            Vector2 direction = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+            player.attacks[attackId].Action(player.gameObject.transform.position, direction.normalized, player);
+
+            StartCoroutine(UIManager.Instance.CooldownStart(player.attacks[attackId].CoolDown, attackId));
+        }
     }
 }

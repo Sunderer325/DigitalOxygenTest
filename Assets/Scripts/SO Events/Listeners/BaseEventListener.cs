@@ -9,7 +9,7 @@ public abstract class BaseEventListener<T, E, UER> : MonoBehaviour, IEventListen
     [SerializeField] private E gameEvent;
     public E GameEvent { get => gameEvent; set => gameEvent = value; }
 
-    [SerializeField] private UER unityEventResponse;
+    [SerializeField] private UER unityEventResponse = default;
 
     private void OnEnable()
     {

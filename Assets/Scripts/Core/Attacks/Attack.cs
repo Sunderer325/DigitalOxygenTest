@@ -6,15 +6,17 @@ using UnityEngine;
 public abstract class Attack : ScriptableObject
 {
     [SerializeField] float coolDown = 0;
+    public float CoolDown { get => coolDown; private set => coolDown = value; }
 
     protected float lastTime = 0;
+
 
     private void OnEnable()
     {
         lastTime = 0;
     }
 
-    protected bool IsCooldownEnd()
+    public bool IsCooldownEnd()
     {
         if (lastTime != 0 && coolDown != 0)
         {

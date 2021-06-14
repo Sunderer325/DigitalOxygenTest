@@ -1,13 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class CharacterSlot : MonoBehaviour
 {
     [HideInInspector] public CharacterDescription charDescription;
     public Image icon;
-    [SerializeField] Text description;
+    public Text play;
+    [SerializeField] Text description = default;
     [HideInInspector] public int id;
 
     bool init;

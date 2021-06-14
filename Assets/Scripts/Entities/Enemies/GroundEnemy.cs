@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GroundEnemy : Enemy
@@ -12,14 +10,14 @@ public class GroundEnemy : Enemy
 	protected override void Start()
     {
 		base.Start();
-		type = EnemyType.GROUND;
+		EnemyType = EnemyType.GROUND;
 		moveDir = UnityEngine.Random.value > 0.5f ? 1 : -1;
 	}
 
 	protected override void Update()
 	{
 		base.Update();
-		if (isDie) return;
+		if (IsDie) return;
 
 		Vector2 delta = target.transform.position - transform.position;
 		if (Math.Abs(delta.x) < 2 && delta.y < maxJumpHeight && delta.y > 1)
@@ -37,8 +35,8 @@ public class GroundEnemy : Enemy
 		TurnToTargetDirection();
 		float jumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(gravity) * (target.transform.position.y - transform.position.y + 1));
 		forcedMovement = true;
-		forcedMovementVelocity = new Vector2(moveDir * moveSpeed, jumpVelocity);
-		movement.Move(forcedMovementVelocity * Time.deltaTime);
+		ForcedMovementVelocity = new Vector2(moveDir * moveSpeed, jumpVelocity);
+		movement.Move(ForcedMovementVelocity * Time.deltaTime);
 	}
 
 	void TurnToTargetDirection()
@@ -48,22 +46,22 @@ public class GroundEnemy : Enemy
 
 	protected override void CollisionsUpdate()
 	{
-		if (movement.collisions.below)
-			velocity.y = 0;
+		if (movement.Collisions.Below)
+			Velocity.y = 0;
 
-		if (movement.collisions.left || movement.collisions.right)
+		if (movement.Collisions.Left || movement.Collisions.Right)
 			moveDir *= -1;
 	}
 	protected override void NormalMovement()
 	{
-		velocity.x = moveDir * moveSpeed;
-		if(Mathf.Abs(velocity.y) < 10f)
-			velocity.y += gravity * Time.deltaTime;
-		movement.Move(velocity * Time.deltaTime);
+		Velocity.x = moveDir * moveSpeed;
+		if(Mathf.Abs(Velocity.y) < 10f)
+			Velocity.y += gravity * Time.deltaTime;
+		movement.Move(Velocity * Time.deltaTime);
 	}
 	protected override void ForcedMovement()
 	{
-		forcedMovementVelocity.y += gravity * Time.deltaTime;
-		movement.Move(forcedMovementVelocity * Time.deltaTime);
+		ForcedMovementVelocity.y += gravity * Time.deltaTime;
+		movement.Move(ForcedMovementVelocity * Time.deltaTime);
 	}
 }

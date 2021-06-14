@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
+[RequireComponent(typeof(AudioPrefab))]
 [RequireComponent(typeof(Movement))]
 public class Projectile : MonoBehaviour
 {
@@ -17,18 +15,24 @@ public class Projectile : MonoBehaviour
     protected Vector2 initialVelocity;
     protected BeingType ownerType;
     protected Being owner;
-
     protected LayerMask damageMask;
-
     protected Movement movement;
+    protected new AudioPrefab audio;
 
     protected virtual void Start()
     {
         movement = GetComponent<Movement>();
+        audio = GetComponent<AudioPrefab>();
     }
 
     protected virtual void Update()
     {
+        if (GameManager.Instance.GameState != GameStates.GAME &&
+            GameManager.Instance.GameState != GameStates.WIN)
+        {
+            audio.Stop();
+            Destroy(gameObject);
+        }
         if (destroyOnTTL)
         {
             timeToLive -= Time.deltaTime;
@@ -40,11 +44,11 @@ public class Projectile : MonoBehaviour
         movement.Move(velocity * Time.deltaTime);
     }
 
-    public virtual void Init(Vector2 force,  Being owner)
+    public virtual void Init(Vector2 force, Being owner)
     {
         AddForce(force);
         this.owner = owner;
-        this.ownerType = owner.GetBeingType;
+        this.ownerType = owner.BeingType;
         if (ownerType == BeingType.ENEMY)
             damageMask = LayerMask.GetMask("Player");
         else if (ownerType == BeingType.PLAYER)

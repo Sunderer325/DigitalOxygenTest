@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviour
 {
-    [SerializeField] Image[] healthIcons;
-    [SerializeField] Color disableColor;
+    [SerializeField] Image[] healthIcons = default;
+    [SerializeField] Color enableColor = default;
+    [SerializeField] Color disableColor = default;
     int actualHP;
 
     private void Start()
@@ -23,7 +21,7 @@ public class HealthBar : MonoBehaviour
         {
             for(int i = actualHP; i < hp; i++)
             {
-                healthIcons[i].color = Color.white;
+                healthIcons[i].color = enableColor;
             }
         }
         else if(hp < actualHP)

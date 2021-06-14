@@ -58,5 +58,7 @@ public class Spyder : Projectile
         hit.transform.GetComponent<Being>().Stunning(stunningTime);
         isHit = true;
         victim = hit.gameObject;
+
+        audio.Play("spyder");
     }
 }

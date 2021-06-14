@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 2388455376387428335}
   - component: {fileID: 282032323133456175}
   - component: {fileID: 4165809188159917664}
+  - component: {fileID: 5116708116517775105}
+  - component: {fileID: -3860153426515326895}
   m_Layer: 10
   m_Name: enemy_5_
   m_TagString: Enemy
@@ -144,16 +146,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab58219059569e44bae02417c274d7cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collisionMask:
+  CollisionMask:
     serializedVersion: 2
     m_Bits: 256
-  headCollisionMask:
+  HeadCollisionMask:
     serializedVersion: 2
     m_Bits: 256
-  skinWidth: 0.015
-  horizontalRayCount: 4
-  verticalRayCount: 4
-  downThrough: 0
+  SkinWidth: 0.015
+  horizontalRayCount: 1
+  verticalRayCount: 1
+  DownThrough: 0
 --- !u!114 &282032323133456175
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,15 +169,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 4
+  moveSpeedOnStunning: 1
   forcedMovementSpeed: 2
+  forcedMovementTime: 0.3
   maxJumpHeight: 4
   minJumpHeight: 1
   timeToJumpApex: 0.4
+  Velocity: {x: 0, y: 0}
+  ForcedMovementVelocity: {x: 0, y: 0}
   health: 1
   invulnerabilityTime: 0.3
-  invulnerability: 0
-  forcedMovementTime: 0.3
   attack: {fileID: 11400000, guid: 54ff5b0f18a47c14e9895cc95720d247, type: 2}
+  amplitude: 1
+  frequrency: 1
 --- !u!114 &4165809188159917664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,3 +194,116 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbd1700b69d111441aa2d6656ca528f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!82 &5116708116517775105
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4052999313053772439}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 24300002, guid: 7ee415bc4776c304ebdd8cbf58503cee,
+    type: 2}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 0.3
+  MaxDistance: 10.38
+  Pan2D: 0
+  rolloffMode: 1
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.8
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &-3860153426515326895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4052999313053772439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91944c0232cd4ad4684d163e3945bb94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clips:
+  - {fileID: 8300000, guid: 955e55c6ad754234da3259e1eb5f705a, type: 3}
+  - {fileID: 8300000, guid: db1e7c918cf741049b1c30399d5c4cc0, type: 3}
+  - {fileID: 8300000, guid: d3acfd71c6d211d498aa784900f1e315, type: 3}

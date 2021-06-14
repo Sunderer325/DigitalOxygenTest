@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SpikeThrowAttack
   m_EditorClassIdentifier: 
   coolDown: 0.7
-  projectile: {fileID: 6763900272754020980, guid: 0b6ac1cedd7767f47ae81dbbf68344de,
+  projectile: {fileID: -7837163068996804989, guid: 0b6ac1cedd7767f47ae81dbbf68344de,
     type: 3}
   force: 1

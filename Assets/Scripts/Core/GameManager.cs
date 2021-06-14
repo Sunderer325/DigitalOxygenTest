@@ -1,30 +1,40 @@
-﻿using System;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     [Header("Scenes")]
-    [SerializeField] int levelScene;
-    [SerializeField] int uiScene;
-    [SerializeField] int entityScene;
+    [SerializeField] int levelScene = default;
+    [SerializeField] int uiScene = default;
+    [SerializeField] int entityScene = default;
 
-    [HideInInspector] public bool[] isHeroesLive = { true, true, true };
-    [HideInInspector] public int selectedHero;
-    bool firstTime = true;
-    bool gameInit;
-    float gameTime;
-    bool inMenu;
+    [Header("Culling masks")]
+    [SerializeField] LayerMask onlyUIMask = default;
+    [SerializeField] LayerMask heroDeathMask = default;
+    [SerializeField] LayerMask drawAllMask = default;
 
-    GameStates gameState = GameStates.MAIN_MENU;
-    public GameStates GetState => gameState;
-    public void SetState(GameStates state)
+    [HideInInspector] public bool ReadyToChangeUI;
+    [HideInInspector] public bool PlayerCheck;
+
+    private GameStates gameState;
+    public GameStates GameState
     {
-        if(state == GameStates.STORY && !firstTime)
-            state = GameStates.CHARACTERS;
-
-        gameState = state;
+        get { return gameState; }
+        set
+        {
+            gameState = value;
+            GameStateChanged();
+        }
     }
+
+    [HideInInspector] public bool[] IsHeroLive = { true, true, true };
+    [HideInInspector] private int selectedHero;
+
+    bool gameIsLoad;
+    int remindEnemyCount;
+
+    new AudioPrefab audio;
 
     private static GameManager _instance;
     public static GameManager Instance
@@ -37,105 +47,176 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void Awake()
-    {
-        InitializeApp();
+    public int SelectedHero { get => selectedHero; 
+        set 
+        { 
+            selectedHero = value;
+            audio.Stop();
+        } 
     }
 
-    private void OnEnable()
+    private void Awake()
     {
-        UnityEngine.Cursor.visible = false;
+        InitializeGame();
     }
 
     private void Update()
     {
-        if (gameState == GameStates.GAME)
+        if (Input.GetButtonDown("Cancel"))
         {
-            if (!gameInit)
+            if (GameState == GameStates.GAME)
             {
-                LoadGame();
-                gameInit = true;
+                GameState = GameStates.PAUSE;
             }
-
-            if (Input.GetButtonDown("Cancel"))
-                OnPause();
-        }
-        else
-        {
-            if (gameState == GameStates.PAUSE)
-                return;
-
-            if (gameInit)
+            else if (GameState == GameStates.PAUSE)
             {
-                UnloadGame();
-                gameInit = false;
+                GameState = GameStates.GAME;
             }
         }
     }
 
-    private void InitializeApp()
+    private void InitializeGame()
     {
-        SceneManager.LoadScene(levelScene, LoadSceneMode.Additive);
-        SceneManager.LoadScene(uiScene, LoadSceneMode.Additive);
-        //async = SceneManager.LoadSceneAsync(entityScene, LoadSceneMode.Additive);
-        //async.completed += SetActiveScene;
-    }
+        ReadyToChangeUI = true;
+        audio = GetComponent<AudioPrefab>();
 
-    private void LoadGame()
-    {
         AsyncOperation async;
+        SceneManager.LoadSceneAsync(uiScene, LoadSceneMode.Additive);
+        SceneManager.LoadSceneAsync(levelScene, LoadSceneMode.Additive);
         async = SceneManager.LoadSceneAsync(entityScene, LoadSceneMode.Additive);
-        async.completed += SetActiveScene;
-
-        Time.timeScale = 1;
-        gameTime = Time.unscaledTime;
-    }
-    private void UnloadGame()
-    {
-        //SceneManager.UnloadScene(levelScene);
-        //SceneManager.UnloadScene(uiScene);
-        SceneManager.UnloadScene(entityScene);
+        async.completed += GameIsLoaded;
     }
 
-    private void SetActiveScene(AsyncOperation ao)
+    private void GameIsLoaded(AsyncOperation ao)
     {
-        SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(entityScene));
+        SceneManager.SetActiveScene(SceneManager.GetSceneAt(entityScene));
+        UnityEngine.Cursor.visible = false;
+        GameState = GameStates.TUTORIAL;
+        EntityManager.Instance.Init();
     }
 
-    public void OnWin()
+    private void NextHero()
     {
-        TimeSpan time = TimeSpan.FromSeconds(Time.unscaledTime - gameTime);
-        gameState = GameStates.PAUSE;
-        inMenu = true;
+        GameState = GameStates.CHARACTERS;
+        EntityManager.Instance.Init();
+        audio.PlayLoop("menu");
     }
 
-    public void OnLose()
+    private void SetGameToDefault()
     {
-        gameState = GameStates.PAUSE;
-        inMenu = true;
-        isHeroesLive[selectedHero] = false;
-    }
-
-    public void OnPause()
-    {
-        if (inMenu)
+        for (int i = 0; i < IsHeroLive.Length; i++)
         {
-            gameState = GameStates.GAME;
-            inMenu = false;
+            IsHeroLive[i] = true;
         }
-        else
+        audio.Stop();
+        GameState = GameStates.MAIN_MENU;
+        EntityManager.Instance.SetToDefault();
+        UIManager.Instance.Reset();
+        EntityManager.Instance.Init();
+    }
+
+    private void GameStateChanged()
+    {
+        switch (GameState)
         {
-            gameState = GameStates.PAUSE;
-            inMenu = true;
+            case GameStates.TUTORIAL:
+                StartCoroutine(UIManager.Instance.BlinkAnim(UIManager.Instance.clickToContinue, GameStates.TUTORIAL));
+                EntityManager.Instance.DisableSpawning = true;
+                break;
+            case GameStates.MAIN_MENU:
+                audio.PlayLoop("menu");
+                EntityManager.Instance.DisableSpawning = true;
+                break;
+            case GameStates.CHARACTERS:
+                CameraFollow.Instance.Camera.cullingMask = onlyUIMask;
+                EntityManager.Instance.DisableSpawning = true;
+                break;
+            case GameStates.GAME:
+                CameraFollow.Instance.Camera.cullingMask = drawAllMask;
+                EntityManager.Instance.DisableSpawning = false;
+                EntityManager.Instance.SpawnHero();
+
+                StartCoroutine(LevelManager.Instance.Opening());
+                StartCoroutine(Opening());
+                break;
+            case GameStates.PAUSE:
+                StartCoroutine(UIManager.Instance.BlinkAnim(UIManager.Instance.statusText, GameStates.PAUSE));
+                EntityManager.Instance.DisableSpawning = true;
+                break;
+            case GameStates.WIN:
+                StartCoroutine(WinEnding());
+                EntityManager.Instance.DisableSpawning = true;
+                break;
+            case GameStates.LOSE:
+                StartCoroutine(LoseEnding());
+                EntityManager.Instance.DisableSpawning = true;
+                break;
         }
+    }
+
+    IEnumerator Opening()
+    {
+        StartCoroutine(LevelManager.Instance.Opening());
+        while (LevelManager.Instance.IsOpening)
+            yield return null;
+
+        yield return new WaitForSeconds(0.5f);
+        PlayerCheck = true;
+        while (PlayerCheck)
+            yield return null;
+
+        audio.Stop();
+        audio.PlayLoop("fight");
+        UIManager.Instance.EnableTopBar();
+        UIManager.Instance.SetHP(5);
+        EntityManager.Instance.DisableSpawning = false;
+    }
+
+    IEnumerator WinEnding()
+    {
+        audio.Stop();
+        StartCoroutine(LevelManager.Instance.Ending());
+        while (LevelManager.Instance.IsEnding == true)
+            yield return null;
+
+        UIManager.Instance.ShowWinScreen();
+        audio.Play("victory");
+        while (!Input.GetButtonDown("Fire1"))
+            yield return null;
+
+        SetGameToDefault();
+    }
+    IEnumerator LoseEnding()
+    {
+        audio.Stop();
+        CameraFollow.Instance.Camera.cullingMask = heroDeathMask;
+
+        yield return new WaitForSeconds(0.3f);
+        audio.Play("gameover");
+        yield return new WaitForSeconds(3);
+
+        IsHeroLive[SelectedHero] = false;
+
+        foreach(bool hero in IsHeroLive)
+        {
+            if (hero == true)
+            {
+                NextHero();
+                yield break;
+            }
+        }
+        SetGameToDefault();
     }
 }
 
 public enum GameStates
 {
+    TUTORIAL,
     MAIN_MENU,
     STORY,
     CHARACTERS,
     GAME,
-    PAUSE
+    PAUSE,
+    WIN,
+    LOSE
 }

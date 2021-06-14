@@ -132,7 +132,6 @@ GameObject:
   - component: {fileID: 1062605996}
   - component: {fileID: 1062605995}
   - component: {fileID: 1062605994}
-  - component: {fileID: 1062605997}
   m_Layer: 13
   m_Name: EntityManager
   m_TagString: Untagged
@@ -156,16 +155,19 @@ MonoBehaviour:
   - {fileID: 4774130686413929779, guid: 26ef309cf28f70442a4390d6fce0ac7e, type: 3}
   - {fileID: 3071972569360714528, guid: 4c9bb03cfa97b684bb1c052b40845d9c, type: 3}
   - {fileID: 5797171715843037123, guid: bf858e7dbf6a7e14a9bd117db3e6685e, type: 3}
-  playerSpawnPoint: {fileID: 1621930937}
-  disableSpawning: 0
-  delayAfterInit: 5
-  enemiesMax: 100
+  heroSpawnPoint: {fileID: 1621930937}
+  EnemiesMax: 2
   enemies:
   - {fileID: 1145250114996419206, guid: 8623f4450f7a46448aa6337a619ec64e, type: 3}
   - {fileID: 5366966763862204316, guid: cc742ddaeff144341b6db55d19e71b8b, type: 3}
   - {fileID: 6601889728737817931, guid: c83bd64dd1dc0ee40a80975b2ae51710, type: 3}
+  - {fileID: 4211398275472601396, guid: fb8be0d2ccaf274408220decd502e653, type: 3}
   - {fileID: 282032323133456175, guid: 77034f7dc0ed3314dbb79d209ea480d7, type: 3}
-  spawnTime: 3
+  EnemiesSpawnCounter: 0
+  EnemiesLiveCounter: 0
+  DisableSpawning: 0
+  firstSpawnDelay: 6
+  spawnTime: 2
   spawnZone: {fileID: 1062605995}
 --- !u!61 &1062605995
 BoxCollider2D:
@@ -207,33 +209,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1062605997
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1062605993}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b72835368234dea47ada60cd14106bd0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameEvent: {fileID: 11400000, guid: bcf9a4832b6b1da4e879083be3f0afe2, type: 2}
-  unityEventResponse:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1062605994}
-        m_MethodName: OnPlayerHit
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &1621930937
 GameObject:
   m_ObjectHideFlags: 0
@@ -258,7 +233,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1621930937}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.08, y: 25.4, z: 0}
+  m_LocalPosition: {x: -0.52, y: 25.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

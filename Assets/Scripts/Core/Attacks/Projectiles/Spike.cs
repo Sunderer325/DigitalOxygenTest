@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Spike : Projectile
 {
@@ -17,13 +15,16 @@ public class Spike : Projectile
     protected override void Update()
     {
         base.Update();
-        if(!hit)
-            velocity = initialVelocity * moveSpeed;
+        if (hit)
+            return;
 
-        if (movement.collisions.any )//&& !(movement.collisions.target.gameObject.CompareTag("Enemy")))
+        velocity = initialVelocity * moveSpeed;
+
+        if (movement.Collisions.Any )
         {
             hit = true;
             velocity = Vector2.zero;
+            audio.Play("spike_hit");
         }
     }
 

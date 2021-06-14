@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Being))]
 [RequireComponent(typeof(Animator))]
@@ -24,6 +22,9 @@ public class BeingAnimation : MonoBehaviour
 			animator.SetBool("IsDie", true);
 			return;
 		}
+
+		if (controller.BeingType == BeingType.ENEMY)
+			return;
 
 		if (controller.Velocity.x > 0.1f || controller.ForcedMovementVelocity.x > 0.1f)
 		{

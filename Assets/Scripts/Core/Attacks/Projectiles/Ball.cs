@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Ball : Projectile
 {
@@ -13,7 +11,14 @@ public class Ball : Projectile
     {
         base.Update();
 
-        if (movement.collisions.above || movement.collisions.below)
+        if (movement.Collisions.Any && velocity.sqrMagnitude > stopDamage)
+        {
+            //float volume = Vector2.Dot(movement.Collisions.Normal, velocity);
+            float volume = velocity.sqrMagnitude / initialVelocity.sqrMagnitude;
+            audio.Play("ball_hit", volume);
+        }
+
+        if (movement.Collisions.Above || movement.Collisions.Below)
         {
             velocity.y *= -1 * bounciness;
             velocity.x *= friction;
@@ -23,7 +28,7 @@ public class Ball : Projectile
             velocity.y += gravity * Time.deltaTime;
         }
 
-        if (movement.collisions.left || movement.collisions.right)
+        if (movement.Collisions.Left || movement.Collisions.Right)
         {
             velocity.x *= -1 * bounciness;
         }
@@ -31,9 +36,8 @@ public class Ball : Projectile
 
     protected override void DetectVictim()
     {
-        if (velocity.sqrMagnitude > stopDamage && movement.collisions.any)
-            //if(movement.collisions.target.gameObject.CompareTag("Enemy"))
-                base.DetectVictim();
+        if (velocity.sqrMagnitude > stopDamage && movement.Collisions.Any)
+            base.DetectVictim();
     }
 
     protected override void Hit(Collider2D hit)

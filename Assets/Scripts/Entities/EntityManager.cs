@@ -1,26 +1,33 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class EntityManager : MonoBehaviour
 {
     [Header("Player")]
-    [SerializeField] GameObject[] heroes;
-    [SerializeField] GameObject playerSpawnPoint;
-    [Header("Enemies")]
-    [SerializeField] bool disableSpawning;
-    [SerializeField] float delayAfterInit = 2f;
-    [SerializeField] int enemiesMax = 100;
-    [SerializeField] Enemy[] enemies;
-    [SerializeField, Min(0.1f)] float spawnTime;
-    [SerializeField] BoxCollider2D spawnZone;
+    [SerializeField] GameObject[] heroes = default;
+    [SerializeField] GameObject heroSpawnPoint = default;
+    
+    GameObject heroInstance;
 
-    int enemiesSpawnCounter;
-    int enemiesDeathCounter;
+    [Header("Enemies")]
+    [SerializeField] public int EnemiesMax = 100;
+    [SerializeField] private Enemy[] enemies = default;
+    private List<Enemy> initEnemies = new List<Enemy>();
+
+    [HideInInspector] public int EnemiesSpawnCounter;
+    [HideInInspector] public int EnemiesLiveCounter;
+
+    [Header("Spawn Settings")]
+    public bool DisableSpawning = default;
+    [SerializeField] float firstSpawnDelay = 2f;
+    [SerializeField, Min(0.1f)] float spawnTime = default;
+    [SerializeField] BoxCollider2D spawnZone = default;
+
     float spawnTimer;
-    float delayTimer;
-    GameObject playerInstance;
+    float gameTime;
+    
     CameraAnimation cameraAnim;
+    bool init;
 
     private static EntityManager _instance;
     public static EntityManager Instance
@@ -33,26 +40,42 @@ public class EntityManager : MonoBehaviour
         }
     }
 
-    private void Start()
+    public void Init()
     {
-        enemiesDeathCounter = enemiesSpawnCounter = enemiesMax;
-        UIManager.Instance.counter.text = enemiesDeathCounter.ToString();
+        if (init)
+        {
+            Reload();
+        }
+        else
+        {
+            EnemiesLiveCounter = EnemiesSpawnCounter = EnemiesMax;
 
-        playerInstance = Instantiate(heroes[GameManager.Instance.selectedHero], playerSpawnPoint.transform.position, Quaternion.identity);
-        CameraFollow.Instance.target = playerInstance;
-        delayTimer = Time.unscaledTime;
+        }
+        UIManager.Instance.Counter.text = EnemiesLiveCounter.ToString();
 
         cameraAnim = CameraFollow.Instance.gameObject.GetComponent<CameraAnimation>();
+        init = true;
+    }
+
+    public void SpawnHero()
+    {
+        if (heroInstance != null)
+            Destroy(heroInstance);
+        heroInstance = Instantiate(heroes[GameManager.Instance.SelectedHero], heroSpawnPoint.transform.position, Quaternion.identity);
+        CameraFollow.Instance.Target = heroInstance;
+        CameraFollow.Instance.gameObject.GetComponent<AudioListener>().enabled = false;
     }
     private void Update()
     {
-        if (disableSpawning)
+        if (!init || DisableSpawning)
             return;
 
-        if (Time.unscaledTime - delayTimer < delayAfterInit)
+        gameTime += Time.deltaTime;
+
+        if (EnemiesSpawnCounter <= 0)
             return;
 
-        if (enemiesSpawnCounter <= 0)
+        if (gameTime < firstSpawnDelay)
             return;
 
         if (spawnTimer <= 0)
@@ -60,33 +83,42 @@ public class EntityManager : MonoBehaviour
             Spawn();
             spawnTimer = spawnTime;
         }
-        else spawnTimer -= Time.deltaTime;
+        else 
+            spawnTimer -= Time.deltaTime;
     }
 
     private void Spawn()
     {
         int enemyId = Random.Range(0, enemies.Length);
-        enemiesSpawnCounter--;
+        EnemiesSpawnCounter--;
         Vector2 spawnPoint = new Vector2(Random.Range(spawnZone.bounds.min.x + 1, spawnZone.bounds.max.x - 1), spawnZone.bounds.center.y);
-        Instantiate(enemies[enemyId], spawnPoint, Quaternion.identity);
+        initEnemies.Add(Instantiate(enemies[enemyId], spawnPoint, Quaternion.identity));
+        Debug.Log("Enemy " + enemyId + " was spawned at " + gameTime);
+    }
+
+    private void Reload()
+    {
+        foreach(Enemy enemy in initEnemies)
+        {
+            Destroy(enemy.gameObject);
+        }
+        initEnemies.Clear();
+        EnemiesSpawnCounter = EnemiesLiveCounter;
+
+        gameTime = 0f;
+    }
+
+    public void SetToDefault()
+    {
+        Reload();
+        init = false;
     }
 
     public void OnEnemyDie()
     {
-        enemiesDeathCounter--;
-        UIManager.Instance.counter.text = enemiesDeathCounter.ToString();
-        if (enemiesDeathCounter <= 0)
-            GameManager.Instance.OnWin();
-        cameraAnim.OnEnemyKilled();
-    }
-
-    public void OnPlayerHit()
-    {
-        cameraAnim.OnPlayerHit();
-    }
-
-    public void OnPlayerDie()
-    {
-        GameManager.Instance.OnLose();
+        EnemiesLiveCounter--;
+        UIManager.Instance.Counter.text = EnemiesLiveCounter.ToString();
+        if (EnemiesLiveCounter <= 0)
+            GameManager.Instance.GameState = GameStates.WIN;
     }
 }

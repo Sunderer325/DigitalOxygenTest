@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Player : Being
 {
@@ -8,7 +6,7 @@ public class Player : Being
 	[SerializeField] int delayToJump = 2;
 
 	[Header("Events")]
-	[SerializeField] private IntEvent OnHealthChanged;
+	[SerializeField] private IntEvent OnHealthChanged = default;
 
 	int frameCounter = 0;
 	bool jump, reminder;
@@ -16,33 +14,33 @@ public class Player : Being
 	protected override void Start()
 	{
 		base.Start();
-		beingType = BeingType.PLAYER;
-		UIManager.Instance.SetHP(health);
+		BeingType = BeingType.PLAYER;
+	}
+
+	protected override void Update()
+	{
+		base.Update();
+
+		if (GameManager.Instance.PlayerCheck)
+		{
+			if (movement.Collisions.Any)
+				GameManager.Instance.PlayerCheck = false;
+		}
 	}
 
 	protected override void CollisionsUpdate()
 	{
-		if (invulnerability)
+		if (movement.Collisions.Above && Velocity.y > 0)
+			Velocity.y = 0;
+		else if (movement.Collisions.Below)
 		{
-			movement.collisionMask = LayerMask.GetMask("Obstacle", "Platform");
-			movement.headCollisionMask = LayerMask.GetMask("Obstacle");
-		}
-		else
-		{
-			movement.collisionMask = LayerMask.GetMask("Obstacle", "Platform", "Enemy");
-			movement.headCollisionMask = LayerMask.GetMask("Obstacle", "Enemy");
-		}
-		if (movement.collisions.above && velocity.y > 0)
-			velocity.y = 0;
-		else if (movement.collisions.below)
-		{
-			inAir = false;
+			InAir = false;
 			jump = false;
-			reminder = false; velocity.y = 0;
+			reminder = false; Velocity.y = 0;
 		}
 		else 
 		{
-			inAir = true;
+			InAir = true;
 			if (!jump && !reminder)
 			{
 				frameCounter = Time.frameCount;
@@ -56,14 +54,14 @@ public class Player : Being
 	private void Jump()
 	{
 		if (PlayerInput.Instance.GetPlayerInput.y == -2)
-			movement.downThrough = false;
+			movement.DownThrough = false;
 		else if(PlayerInput.Instance.GetPlayerInput.y == -1)
-			movement.downThrough = true;
+			movement.DownThrough = true;
 
-		if (inAir)
+		if (InAir)
 		{
-			if (PlayerInput.Instance.GetPlayerInput.y == 2 && velocity.y > minJumpVelocity)
-				velocity.y = minJumpVelocity;
+			if (PlayerInput.Instance.GetPlayerInput.y == 2 && Velocity.y > minJumpVelocity)
+				Velocity.y = minJumpVelocity;
 
 			if (Time.frameCount - frameCounter > delayToJump)
 				return;
@@ -71,34 +69,49 @@ public class Player : Being
 
 		if(PlayerInput.Instance.GetPlayerInput.y == 1)
 		{
-			velocity.y = maxJumpVelocity;   //jump button is down
+			Velocity.y = maxJumpVelocity;   //jump button is down
 			jump = true;
+
+			audio.Play("hero_jump", 0.5f);
 		}
 	}
 
 	protected override void ForcedMovement()
 	{
-		forcedMovementVelocity.x += PlayerInput.Instance.GetPlayerInput.x * forcedMovementSpeed;
-		forcedMovementVelocity.y += gravity * Time.deltaTime;
-		movement.Move(forcedMovementVelocity * Time.deltaTime);
+		ForcedMovementVelocity.x += PlayerInput.Instance.GetPlayerInput.x * forcedMovementSpeed;
+		ForcedMovementVelocity.y += gravity * Time.deltaTime;
+		movement.Move(ForcedMovementVelocity * Time.deltaTime);
 	}
 
 	protected override void NormalMovement()
 	{
-		velocity.x = PlayerInput.Instance.GetPlayerInput.x * moveSpeed;
-		velocity.y += gravity * Time.deltaTime;
-		movement.Move(velocity * Time.deltaTime);
+		Velocity.x = PlayerInput.Instance.GetPlayerInput.x * moveSpeed;
+		Velocity.y += gravity * Time.deltaTime;
+		movement.Move(Velocity * Time.deltaTime);
 	}
 
 	public override void GetDamage(int damage, Vector2 force)
 	{
+		if (Invulnerability)
+			return;
 		base.GetDamage(damage, force);
 		OnHealthChanged.Raise(health);
+
+		audio.Play("hero_hit");
 	}
 
 	protected override void Die()
 	{
-		base.Die();
-		EntityManager.Instance.OnPlayerDie();
+		IsDie = true;
+		GameManager.Instance.GameState = GameStates.LOSE;
+		audio.Stop();
+	}
+
+	public void DisableMovement()
+	{
+		Velocity = Vector2.zero;
+		movement.enabled = false;
+		PlayerInput.Instance.enabled = false;
+		gameObject.layer = 0;
 	}
 }

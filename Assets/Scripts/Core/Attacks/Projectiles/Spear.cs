@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
@@ -7,10 +6,11 @@ public class Spear : Projectile
 {
     [SerializeField] float moveSpeed = 5f;
     [SerializeField] float smashDelay = 1.5f;
+    [SerializeField] float maxFloatDistance = 7f;
     LineRenderer line;
 
     bool smashed;
-    float comebackTolerance = 0.1f;
+    float comebackTolerance = 0.5f;
     Vector3[] lineVertices = new Vector3[2];
 
     protected override void Start()
@@ -19,6 +19,7 @@ public class Spear : Projectile
         line = GetComponent<LineRenderer>();
         line.positionCount = lineVertices.Length;
         line.SetPositions(lineVertices);
+        StartCoroutine(MoveSpear());
     }
 
     protected override void Update()
@@ -34,7 +35,6 @@ public class Spear : Projectile
     public override void Init(Vector2 force, Being owner)
     {
         base.Init(force, owner);
-        StartCoroutine(MoveSpear());
     }
 
     IEnumerator MoveSpear()
@@ -42,17 +42,26 @@ public class Spear : Projectile
         while (!movement)
             yield return null;
 
-        while (!movement.collisions.any && !smashed) { 
+        audio.Play("hook_float");
+        while (!movement.Collisions.Any && !smashed) { 
             velocity = initialVelocity * moveSpeed;
+            if (Vector2.Distance(owner.transform.position, transform.position) > maxFloatDistance)
+                smashed = true;
+
             yield return null;
         }
 
+        audio.Stop();
+        audio.Play("hook_smash");
+
         smashed = true;
         velocity = Vector2.zero;
-        movement.collisionMask = 0;
-        movement.headCollisionMask = 0;
 
         yield return new WaitForSeconds(smashDelay);
+
+        audio.Play("hook_float");
+        movement.CollisionMask = 0;
+        movement.HeadCollisionMask = 0;
 
         while (!IsItBack())
         {
@@ -61,6 +70,7 @@ public class Spear : Projectile
             yield return null;
         }
 
+        audio.Stop();
         Destroy(gameObject);
     }
 

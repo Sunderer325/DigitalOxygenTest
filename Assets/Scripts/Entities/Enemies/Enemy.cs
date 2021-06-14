@@ -1,19 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public abstract class Enemy : Being
 {
 	[SerializeField] protected Attack attack;
 	protected GameObject target;
 	protected Collider2D targetCollider;
-	protected EnemyType type;
-	public new EnemyType GetType => type;
+	public EnemyType EnemyType { get; protected set; }
 
 	protected override void Start()
 	{
 		base.Start();
-		beingType = BeingType.ENEMY;
+		BeingType = BeingType.ENEMY;
 		target = GameObject.FindGameObjectWithTag("Player");
 		targetCollider = target.GetComponent<Collider2D>();
 	}
@@ -21,21 +18,34 @@ public abstract class Enemy : Being
 	protected override void Update()
 	{
 		base.Update();
-		if (isDie) return;
+		if (IsDie) return;
 
 		AttackTarget();
 	}
 
 	protected virtual bool AttackTarget()
 	{
-		Vector2 attackPosition = (Vector2)transform.position + movement.GetCollider.offset;
-		Vector2 contactPoint = targetCollider.ClosestPoint(attackPosition);
-		if (Vector2.Distance(attackPosition, contactPoint) <= (attack as MeleeAttack).DamageRadius)
+		if (attack.IsCooldownEnd() && !stunning)
 		{
- 			attack.Action(attackPosition, target.transform.position, this);
-			return true;
+			Vector2 attackPosition = (Vector2)transform.position + movement.Collider.offset;
+			Vector2 contactPoint = targetCollider.ClosestPoint(attackPosition);
+			if (Vector2.Distance(attackPosition, contactPoint) <= (attack as MeleeAttack).DamageRadius)
+			{
+				attack.Action(attackPosition, target.transform.position, this);
+				Debug.Log(gameObject.name + " attacks " + target.name + " with " + attack.name);
+				return true;
+			}
 		}
 		return false;
+	}
+
+	public override void GetDamage(int damage, Vector2 force)
+	{
+		if (Invulnerability)
+			return;
+		base.GetDamage(damage, force);
+
+		audio.Play("enemy_hit");
 	}
 
 	protected override void Die()
@@ -43,14 +53,6 @@ public abstract class Enemy : Being
 		base.Die();
 		EntityManager.Instance.OnEnemyDie();
 	}
-
-	//private void OnDrawGizmos()
-	//{
-	//	Gizmos.color = Color.red;
-	//	Gizmos.DrawWireSphere((Vector2)transform.position + movement.GetCollider.offset, attack.DamageRadius);
-	//	Gizmos.color = Color.green;
-	//	Gizmos.DrawWireCube((Vector2)transform.position + movement.GetCollider.offset, movement.GetCollider.size);
-	//}
 }
 
 public enum EnemyType

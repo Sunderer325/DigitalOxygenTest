@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c65f1ce586c15f48879e2e567a26572, type: 3}
   m_Name: BiteAttack
   m_EditorClassIdentifier: 
-  coolDown: 1
-  damage: 1
-  damageRadius: 0.5
-  knockbackForce: 5
+  coolDown: 0
   knockbackY: 0.75
+  damage: 1
+  damageDiameter: 1
+  knockbackForce: 10

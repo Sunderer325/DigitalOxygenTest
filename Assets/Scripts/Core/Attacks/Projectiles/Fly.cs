@@ -17,6 +17,8 @@ public class Fly : Projectile
         FindClosestTarget();
         if (closest == null)
             StartCoroutine(FindEnemy());
+
+        audio.PlayLoop("fly");
     }
     protected override void Update()
     {
@@ -59,7 +61,7 @@ public class Fly : Projectile
         if (enemies.Count() == 0)
             return;
 
-        closest = enemies.First();
+         closest = enemies.First();
         foreach(Enemy enemy in enemies)
         {
             float nextDst = Vector2.Distance(transform.position, enemy.transform.position);
