@@ -15,4 +15,4 @@ MonoBehaviour:
   CoolDown: 1.5
   Projectile: {fileID: -7837163068996804989, guid: 0b6ac1cedd7767f47ae81dbbf68344de,
     type: 3}
-  Force: 2
+  Force: 1.5

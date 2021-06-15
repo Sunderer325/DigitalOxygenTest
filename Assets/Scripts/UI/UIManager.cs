@@ -12,9 +12,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] int blinkCount = 8;
     [HideInInspector] public bool IsSlotAnim;
 
-    [Header("Cursor")]
-    [SerializeField] Image cursor = default;
-
     [Header("Tutorial UI")]
     [SerializeField] GameObject tutorial = default;
     public Text clickToContinue = default;
@@ -83,9 +80,6 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        Vector3 cursorPos = Input.mousePosition;
-        cursor.transform.position = new Vector2(cursorPos.x, cursorPos.y);
-
         if (GameManager.Instance.ReadyToChangeUI)
             SwitchUI();
     }
@@ -165,6 +159,10 @@ public class UIManager : MonoBehaviour
                     win.SetActive(false);
 
                     characterIcon.sprite = icons[GameManager.Instance.SelectedHero];
+                }
+                if (pauseMenu.activeSelf)
+                {
+                    pauseMenu.SetActive(false);
                 }
                 break;
             case GameStates.PAUSE:

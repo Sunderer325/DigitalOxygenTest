@@ -31,8 +31,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public bool[] IsHeroLive = { true, true, true };
     [HideInInspector] private int selectedHero;
 
-    bool gameIsLoad;
-    int remindEnemyCount;
+    bool pause;
 
     new AudioPrefab audio;
 
@@ -67,6 +66,7 @@ public class GameManager : MonoBehaviour
             if (GameState == GameStates.GAME)
             {
                 GameState = GameStates.PAUSE;
+                pause = true;
             }
             else if (GameState == GameStates.PAUSE)
             {
@@ -90,7 +90,8 @@ public class GameManager : MonoBehaviour
     private void GameIsLoaded(AsyncOperation ao)
     {
         SceneManager.SetActiveScene(SceneManager.GetSceneAt(entityScene));
-        UnityEngine.Cursor.visible = false;
+        //UnityEngine.Cursor.visible = false;
+        //UnityEngine.Cursor.lockState = CursorLockMode.Confined;
         GameState = GameStates.TUTORIAL;
         EntityManager.Instance.Init();
     }
@@ -132,8 +133,13 @@ public class GameManager : MonoBehaviour
                 EntityManager.Instance.DisableSpawning = true;
                 break;
             case GameStates.GAME:
+                if (pause)
+                {
+                    pause = false;
+                    EntityManager.Instance.DisableSpawning = false;
+                    return;
+                }
                 CameraFollow.Instance.Camera.cullingMask = drawAllMask;
-                EntityManager.Instance.DisableSpawning = false;
                 EntityManager.Instance.SpawnHero();
 
                 StartCoroutine(LevelManager.Instance.Opening());
