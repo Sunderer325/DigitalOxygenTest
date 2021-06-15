@@ -40,8 +40,8 @@ public class Projectile : MonoBehaviour
                 Destroy(gameObject);
         }
 
-        DetectVictim();
         movement.Move(velocity * Time.deltaTime);
+        DetectVictim();
     }
 
     public virtual void Init(Vector2 force, Being owner)

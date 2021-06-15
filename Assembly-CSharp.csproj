@@ -88,16 +88,13 @@
     <Compile Include="Assets\Scripts\Entities\Player\CameraFollow.cs" />
     <Compile Include="Assets\Scripts\Entities\Player\Player.cs" />
     <Compile Include="Assets\Scripts\Entities\Player\PlayerInput.cs" />
-    <Compile Include="Assets\Scripts\SO Events\Events\AttackEvent.cs" />
     <Compile Include="Assets\Scripts\SO Events\Events\BaseEvent.cs" />
     <Compile Include="Assets\Scripts\SO Events\Events\IntEvent.cs" />
     <Compile Include="Assets\Scripts\SO Events\Events\VoidEvent.cs" />
-    <Compile Include="Assets\Scripts\SO Events\Listeners\AttackListener.cs" />
     <Compile Include="Assets\Scripts\SO Events\Listeners\BaseEventListener.cs" />
     <Compile Include="Assets\Scripts\SO Events\Listeners\IEventListener.cs" />
     <Compile Include="Assets\Scripts\SO Events\Listeners\IntListener.cs" />
     <Compile Include="Assets\Scripts\SO Events\Listeners\VoidListener.cs" />
-    <Compile Include="Assets\Scripts\SO Events\UnityEvents\UnityAttackEvent.cs" />
     <Compile Include="Assets\Scripts\SO Events\UnityEvents\UnityIntEvent.cs" />
     <Compile Include="Assets\Scripts\SO Events\UnityEvents\UnityVoidEvent.cs" />
     <Compile Include="Assets\Scripts\UI\CameraAnimation.cs" />
@@ -105,8 +102,6 @@
     <Compile Include="Assets\Scripts\UI\CharacterSlot.cs" />
     <Compile Include="Assets\Scripts\UI\HealthBar.cs" />
     <Compile Include="Assets\Scripts\UI\UIManager.cs" />
-    <None Include="Assets\Graphics\Bar.shader" />
-    <None Include="Assets\Graphics\InvertColors.shader" />
     <Reference Include="UnityEngine">
       <HintPath>C:/Program Files/Unity/2019.4.4f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>

@@ -245,13 +245,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 1
   damageRadius: 0.25
-  knockbackForce: 25
+  knockbackForce: 15
   gravity: -40
   destroyOnTTL: 1
   timeToLive: 3
   bounciness: 0.35
   friction: 0.8
-  stopDamage: 3
+  stopDamage: 5
 --- !u!114 &-3100058475620710472
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
-  damageRadius: 0.3
+  damageRadius: 0.2
   knockbackForce: 5
   gravity: 0
   destroyOnTTL: 1

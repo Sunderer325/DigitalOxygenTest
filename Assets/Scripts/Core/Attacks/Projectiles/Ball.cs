@@ -16,6 +16,9 @@ public class Ball : Projectile
             //float volume = Vector2.Dot(movement.Collisions.Normal, velocity);
             float volume = velocity.sqrMagnitude / initialVelocity.sqrMagnitude;
             audio.Play("ball_hit", volume);
+
+            //if (movement.Collisions.Target.gameObject.CompareTag("Enemy"))
+            //    DetectVictim();
         }
 
         if (movement.Collisions.Above || movement.Collisions.Below)

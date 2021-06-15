@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ce144f3b05749f4fba0cc6a5958d713, type: 3}
   m_Name: HookAttack
   m_EditorClassIdentifier: 
-  coolDown: 8
-  projectile: {fileID: 5191332114037887402, guid: e3d82818070856f4787b519210831798,
+  CoolDown: 7
+  Projectile: {fileID: 5191332114037887402, guid: e3d82818070856f4787b519210831798,
     type: 3}
-  force: 1
+  Force: 1

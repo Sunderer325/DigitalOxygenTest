@@ -12,6 +12,12 @@ public class FlyingDistantEnemy : Enemy
         EnemyType = EnemyType.AIR;
 
         audio.PlayLoop("enemy_fly");
+
+        ThrowAttack attackInstance = ScriptableObject.CreateInstance(attack.GetType()) as ThrowAttack;
+        attackInstance.CoolDown = attack.CoolDown;
+        attackInstance.Force = (attack as ThrowAttack).Force;
+        attackInstance.Projectile = (attack as ThrowAttack).Projectile;
+        attack = attackInstance;
     }
 
     protected override bool AttackTarget()

@@ -106,11 +106,11 @@ public abstract class Being : MonoBehaviour
 	{
 		if (movement.Collisions.Below)
 		{
-			Velocity.x *= afterDeathFriction;
+			ForcedMovementVelocity.x *= afterDeathFriction;
 			InAir = false;
 		}
-		Velocity.y += gravity * Time.deltaTime;
-		movement.Move(Velocity * Time.deltaTime);
+		ForcedMovementVelocity.y += gravity * Time.deltaTime;
+		movement.Move(ForcedMovementVelocity * Time.deltaTime);
 	}
 
 	void InvulnerabilityUpdate()

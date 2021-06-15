@@ -746,9 +746,14 @@ MonoBehaviour:
   mainMenu: {fileID: 566495845}
   speech: {fileID: 434275299}
   speechTexts:
-  - Hey!
-  - Stop right there
-  - You criminal scum
+  - '"Hey!"'
+  - '"Stop right there!"'
+  - The guards surrounded you.
+  - '"You bastards, encroached on his majesty''s treasure."'
+  - '"For this crime, you will sentenced to a mortal battle with a hundred monsters."'
+  - '"If you defeat them all, you all will be pardoned."'
+  - '"Those who will survive there, of course."'
+  - The guard locks you into a cage in which you await your fate.
   chest: {fileID: 1713894854}
   openChest: {fileID: -337247863352378433, guid: 9021b0f8b4528b74e8a34fc58ede91e4,
     type: 3}
@@ -1566,7 +1571,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1618.1782, y: 382.45483}
+  m_SizeDelta: {x: 3331.2046, y: 904.4136}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &434275299
 MonoBehaviour:
@@ -1599,7 +1604,7 @@ MonoBehaviour:
     m_RichText: 0
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
-    m_LineSpacing: 1
+    m_LineSpacing: 1.2
   m_Text: Open the chest to play the game
 --- !u!222 &434275300
 CanvasRenderer:
@@ -1879,7 +1884,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &566495846
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3771,7 +3776,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1541586626
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4474,7 +4479,7 @@ MonoBehaviour:
   m_Sprite: {fileID: 6292683311950574835, guid: 9021b0f8b4528b74e8a34fc58ede91e4,
     type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1

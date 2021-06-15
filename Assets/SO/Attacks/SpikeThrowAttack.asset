@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ce144f3b05749f4fba0cc6a5958d713, type: 3}
   m_Name: SpikeThrowAttack
   m_EditorClassIdentifier: 
-  coolDown: 0.7
-  projectile: {fileID: -7837163068996804989, guid: 0b6ac1cedd7767f47ae81dbbf68344de,
+  CoolDown: 1.5
+  Projectile: {fileID: -7837163068996804989, guid: 0b6ac1cedd7767f47ae81dbbf68344de,
     type: 3}
-  force: 1
+  Force: 2

@@ -5,11 +5,9 @@ using UnityEngine;
 
 public abstract class Attack : ScriptableObject
 {
-    [SerializeField] float coolDown = 0;
-    public float CoolDown { get => coolDown; private set => coolDown = value; }
+    public float CoolDown = 0;
 
     protected float lastTime = 0;
-
 
     private void OnEnable()
     {
@@ -18,9 +16,9 @@ public abstract class Attack : ScriptableObject
 
     public bool IsCooldownEnd()
     {
-        if (lastTime != 0 && coolDown != 0)
+        if (lastTime != 0 && CoolDown != 0)
         {
-            if (Time.unscaledTime - lastTime > coolDown)
+            if (Time.unscaledTime - lastTime > CoolDown)
             {
                 lastTime = Time.unscaledTime;
                 return true;

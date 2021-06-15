@@ -156,7 +156,7 @@ MonoBehaviour:
   - {fileID: 3071972569360714528, guid: 4c9bb03cfa97b684bb1c052b40845d9c, type: 3}
   - {fileID: 5797171715843037123, guid: bf858e7dbf6a7e14a9bd117db3e6685e, type: 3}
   heroSpawnPoint: {fileID: 1621930937}
-  EnemiesMax: 2
+  EnemiesMax: 100
   enemies:
   - {fileID: 1145250114996419206, guid: 8623f4450f7a46448aa6337a619ec64e, type: 3}
   - {fileID: 5366966763862204316, guid: cc742ddaeff144341b6db55d19e71b8b, type: 3}
