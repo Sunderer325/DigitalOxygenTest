@@ -54,4 +54,14 @@ public class AudioPrefab : MonoBehaviour
 
         source.loop = false;
     }
+
+    public void Pause()
+    {
+        source.Pause();
+    }
+
+    public void Unpause()
+    {
+        source.UnPause();
+    }
 }

@@ -50,6 +50,9 @@ public class UIManager : MonoBehaviour
 
     [Header("Win Screen")]
     [SerializeField] GameObject win = default;
+    [SerializeField] Text topSpeech = default;
+    [SerializeField] Text middleSpeech = default;
+    [SerializeField] Text bottomSpeech = default;
 
     new AudioPrefab audio;
 
@@ -266,6 +269,21 @@ public class UIManager : MonoBehaviour
         pauseMenu.SetActive(false);
         gameUI.SetActive(false);
         win.SetActive(true);
+        topSpeech.text = "Hurray!";
+        middleSpeech.text = "The surviving prisoners were released and pardoned";
+        bottomSpeech.text = "Thanks for playing!";
+    }
+    public void ShowLoseScreen()
+    {
+        tutorial.SetActive(false);
+        mainMenu.SetActive(false);
+        charactersMenu.SetActive(false);
+        pauseMenu.SetActive(false);
+        gameUI.SetActive(false);
+        win.SetActive(true);
+        topSpeech.text = "";
+        middleSpeech.text = "They got what they deserve";
+        bottomSpeech.text = "";
     }
 
     public void SetHP(int hp)

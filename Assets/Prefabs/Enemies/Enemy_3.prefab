@@ -30,7 +30,7 @@ PrefabInstance:
     - target: {fileID: 1145250114996419206, guid: 8623f4450f7a46448aa6337a619ec64e,
         type: 3}
       propertyPath: jumpChance
-      value: 0.3
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 1145250114996419206, guid: 8623f4450f7a46448aa6337a619ec64e,
         type: 3}

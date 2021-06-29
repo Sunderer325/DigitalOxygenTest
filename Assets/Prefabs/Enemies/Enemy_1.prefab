@@ -173,14 +173,14 @@ MonoBehaviour:
   forcedMovementSpeed: 2
   forcedMovementTime: 0.3
   maxJumpHeight: 4.5
-  minJumpHeight: 1
-  timeToJumpApex: 0.6
+  minJumpHeight: 1.5
+  timeToJumpApex: 0.7
   Velocity: {x: 0, y: 0}
   ForcedMovementVelocity: {x: 0, y: 0}
   health: 1
   invulnerabilityTime: 0.3
   attack: {fileID: 11400000, guid: 54ff5b0f18a47c14e9895cc95720d247, type: 2}
-  jumpChance: 0.3
+  jumpChance: 0.2
 --- !u!114 &5101543761580861628
 MonoBehaviour:
   m_ObjectHideFlags: 0

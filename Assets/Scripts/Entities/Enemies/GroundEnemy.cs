@@ -20,15 +20,16 @@ public class GroundEnemy : Enemy
 		if (IsDie) return;
 
 		Vector2 delta = target.transform.position - transform.position;
-		if (Math.Abs(delta.x) < 2 && delta.y < maxJumpHeight && delta.y > 1)
+		if (Math.Abs(delta.x) < 2 && delta.y < maxJumpHeight && delta.y > minJumpHeight)
 		{
-			if(!forcedMovement && stunning)
+			if(!forcedMovement && !stunning)
 				Jump();
 		}
 	}
 
 	void Jump()
 	{
+		Debug.Log("Can jump");
 		if (UnityEngine.Random.value > jumpChance * Time.fixedDeltaTime)
 			return;
 

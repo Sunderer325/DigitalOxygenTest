@@ -207,7 +207,7 @@ GameObject:
   - component: {fileID: 11104481}
   - component: {fileID: 11104480}
   m_Layer: 5
-  m_Name: Speech (5)
+  m_Name: Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -780,6 +780,9 @@ MonoBehaviour:
   - {fileID: 3875322507719131207, guid: 9021b0f8b4528b74e8a34fc58ede91e4, type: 3}
   Counter: {fileID: 1678606546}
   win: {fileID: 1541586625}
+  topSpeech: {fileID: 261794001}
+  middleSpeech: {fileID: 648735259}
+  bottomSpeech: {fileID: 11104480}
 --- !u!4 &252342441
 Transform:
   m_ObjectHideFlags: 0
@@ -945,7 +948,7 @@ GameObject:
   - component: {fileID: 261794002}
   - component: {fileID: 261794001}
   m_Layer: 5
-  m_Name: Speech (3)
+  m_Name: Top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1807,7 +1810,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &566495846
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2112,7 +2115,7 @@ GameObject:
   - component: {fileID: 648735260}
   - component: {fileID: 648735259}
   m_Layer: 5
-  m_Name: Speech (4)
+  m_Name: Middle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3699,7 +3702,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1541586626
 RectTransform:
   m_ObjectHideFlags: 0

@@ -136,6 +136,7 @@ public class GameManager : MonoBehaviour
                 if (pause)
                 {
                     pause = false;
+                    audio.Unpause();
                     EntityManager.Instance.DisableSpawning = false;
                     return;
                 }
@@ -148,6 +149,7 @@ public class GameManager : MonoBehaviour
             case GameStates.PAUSE:
                 StartCoroutine(UIManager.Instance.BlinkAnim(UIManager.Instance.statusText, GameStates.PAUSE));
                 EntityManager.Instance.DisableSpawning = true;
+                audio.Pause();
                 break;
             case GameStates.WIN:
                 StartCoroutine(WinEnding());
@@ -211,6 +213,11 @@ public class GameManager : MonoBehaviour
                 yield break;
             }
         }
+
+        UIManager.Instance.ShowLoseScreen();
+        while (!Input.GetButtonDown("Fire1"))
+            yield return null;
+
         SetGameToDefault();
     }
 }
